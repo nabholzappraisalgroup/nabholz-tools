@@ -372,6 +372,12 @@ hr.divider{border:none;border-top:1.5px solid var(--gray-100);margin:26px 0}
   border:1.5px solid var(--gray-300);
 }
 .btn-outline:hover{background:var(--gray-100)}
+.btn-monday{
+  background:#f84e60;
+  color:#fff;
+  border:none;
+}
+.btn-monday:hover{background:#e0404f}
 
 /* ---- SUBSECTION ---- */
 .subsec{
@@ -1502,6 +1508,7 @@ hr.divider{border:none;border-top:1.5px solid var(--gray-100);margin:26px 0}
 
   <div class="sum-actions" id="no-print-note">
     <button class="btn btn-primary" onclick="window.print()">🖨️ Print Order Form</button>
+    <button class="btn btn-monday" onclick="sendToMonday()">📋 Send to Monday.com</button>
     <button class="btn btn-outline" onclick="startNewOrder()">↩ Start New Order</button>
   </div>
 </div>
@@ -2399,6 +2406,42 @@ function formatDate(d) {
 }
 
 // ---------- NEW ORDER ----------
+function sendToMonday() {
+  const d = orderData;
+  const address = [d.s1_street, d.s1_city].filter(Boolean).join(', ') || 'New Appraisal Order';
+  const subject = encodeURIComponent(address);
+
+  // Build a clean plain-text body from the summary div
+  const summaryEl = document.getElementById('sum-body');
+  let bodyText = 'NABHOLZ APPRAISAL GROUP — PRIVATE ORDER INTAKE\n';
+  bodyText += 'Date: ' + new Date().toLocaleString() + '\n';
+  const intakeBy = document.getElementById('intake_by')?.value;
+  if (intakeBy) bodyText += 'Intake by: ' + intakeBy + '\n';
+  bodyText += '\n';
+
+  // Escalation flags
+  if (escalationFlags.length > 0) {
+    bodyText += '⚠️ ESCALATE TO TOMMY BEFORE PROCEEDING\n';
+    escalationFlags.forEach(f => bodyText += '  • ' + f + '\n');
+    bodyText += '\n';
+  }
+
+  // Walk the summary sections and pull label/value pairs
+  summaryEl.querySelectorAll('.sum-section').forEach(sec => {
+    const title = sec.querySelector('.sum-section-title')?.textContent?.trim();
+    if (title) bodyText += '--- ' + title + ' ---\n';
+    sec.querySelectorAll('.sum-row').forEach(row => {
+      const label = row.querySelector('.sum-label')?.textContent?.trim();
+      const value = row.querySelector('.sum-value')?.textContent?.trim();
+      if (label && value) bodyText += label + ': ' + value + '\n';
+    });
+    bodyText += '\n';
+  });
+
+  const mailto = `mailto:new2025orders@nabholz-appraisal-company.us.monday.com?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+  window.location.href = mailto;
+}
+
 function startNewOrder() {
   if (confirm('Start a new order? All current data will be cleared.')) {
     orderData = {};
