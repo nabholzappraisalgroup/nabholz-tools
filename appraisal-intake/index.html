@@ -1395,20 +1395,21 @@ hr.divider{border:none;border-top:1.5px solid var(--gray-100);margin:26px 0}
   </div>
 
   <div class="fgrp">
-    <label>Any time sensitivity or hard deadline? <span class="req">*</span></label>
+    <label>Report needed by / due date <span class="req">*</span></label>
     <div class="radio-list horiz" id="rg_s4_deadline">
-      <label class="r-card"><input type="radio" name="s4_deadline" value="Yes"> Yes</label>
-      <label class="r-card"><input type="radio" name="s4_deadline" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="s4_deadline" value="Specific date"> Specific date</label>
+      <label class="r-card"><input type="radio" name="s4_deadline" value="No rush"> No rush</label>
+      <label class="r-card"><input type="radio" name="s4_deadline" value="TBD"> TBD / Will confirm</label>
     </div>
     <div class="cond" id="cond_s4_deadline_yes">
       <div class="f2col" style="margin:0">
         <div class="fgrp" style="margin:0">
-          <label for="s4_deadline_date">Deadline date</label>
+          <label for="s4_deadline_date">Needed by date</label>
           <input type="date" id="s4_deadline_date">
         </div>
         <div class="fgrp" style="margin:0">
-          <label for="s4_deadline_note">Explain the deadline</label>
-          <input type="text" id="s4_deadline_note" placeholder="What is this deadline for?">
+          <label for="s4_deadline_note">Notes on deadline</label>
+          <input type="text" id="s4_deadline_note" placeholder="e.g. court filing, closing date, tax deadline...">
         </div>
       </div>
     </div>
@@ -1802,7 +1803,7 @@ function initS4() {
   bindRadio('s4_hypo', v => showCond('cond_s4_hypo_yes', v === 'Yes'));
   bindRadio('s4_env', v => showCond('cond_s4_env_yes', v === 'Yes'));
   bindRadio('s4_testify', v => showCond('cond_s4_testify_yes', v === 'Yes' || v === 'Possibly'));
-  bindRadio('s4_deadline', v => showCond('cond_s4_deadline_yes', v === 'Yes'));
+  bindRadio('s4_deadline', v => showCond('cond_s4_deadline_yes', v === 'Specific date'));
 }
 
 function configureS4() {
@@ -2339,7 +2340,7 @@ function buildSummary() {
     ['Hypothetical Improvements', d.s4_hypo + (d.s4_hypo_desc ? ': ' + d.s4_hypo_desc : '')],
     ['Environmental / Encumbrances', d.s4_env + (d.s4_env_desc ? ': ' + d.s4_env_desc : '')],
     ['Testimony Anticipated', d.s4_testify || (testimonyAskedInBranch ? '(addressed in order details)' : '')],
-    ['Hard Deadline', d.s4_deadline === 'Yes' ? (formatDate(d.s4_deadline_date) + (d.s4_deadline_note ? ' — ' + d.s4_deadline_note : '')) : d.s4_deadline],
+    ['Report Needed By', d.s4_deadline === 'Specific date' ? (formatDate(d.s4_deadline_date) + (d.s4_deadline_note ? ' — ' + d.s4_deadline_note : '')) : d.s4_deadline],
   ]);
 
   // 5. Attorney / Third Party
