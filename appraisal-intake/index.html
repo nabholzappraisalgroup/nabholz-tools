@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nabholz Appraisal Group — Private Order Intake</title>
+<style>
+:root {
+  --navy: #1a2e4a;
+  --navy-light: #243d62;
+  --navy-dark: #111e31;
+  --gold: #c9a84c;
+  --gold-light: #dfc07a;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fca5a5;
+  --orange-bg: #fffbeb;
+  --orange-border: #fde68a;
+  --orange-text: #92400e;
+  --blue-bg: #eff6ff;
+  --blue-border: #bfdbfe;
+  --blue-text: #1e40af;
+  --green: #16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;
+  background:#eef1f5;
+  color:var(--gray-900);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---- HEADER ---- */
+.app-header{
+  background:var(--navy);
+  color:var(--white);
+  padding:22px 24px 18px;
+  text-align:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
+  position:relative;
+  z-index:10;
+}
+.app-header h1{
+  font-size:1.55rem;
+  font-weight:800;
+  letter-spacing:.1em;
+  color:var(--gold);
+  text-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+.app-header p{
+  font-size:.88rem;
+  color:rgba(255,255,255,.7);
+  margin-top:4px;
+  letter-spacing:.05em;
+}
+
+/* ---- PROGRESS BAR ---- */
+.progress-wrap{
+  background:var(--navy-dark);
+  padding:12px 28px 14px;
+  id="no-print";
+}
+.progress-track{
+  background:rgba(255,255,255,.18);
+  height:7px;
+  border-radius:4px;
+  overflow:hidden;
+}
+.progress-fill{
+  background:linear-gradient(90deg,var(--gold),var(--gold-light));
+  height:100%;
+  border-radius:4px;
+  transition:width .45s cubic-bezier(.4,0,.2,1);
+  width:0%;
+}
+.progress-label{
+  text-align:center;
+  color:rgba(255,255,255,.55);
+  font-size:.73rem;
+  margin-top:7px;
+  letter-spacing:.04em;
+}
+
+/* ---- MAIN ---- */
+.main-content{
+  flex:1;
+  max-width:780px;
+  width:100%;
+  margin:28px auto 50px;
+  padding:0 16px;
+}
+
+/* ---- SECTIONS ---- */
+.section{
+  display:none;
+  opacity:0;
+  transform:translateY(14px);
+  transition:opacity .2s ease,transform .2s ease;
+}
+.section.active{display:block}
+.section.visible{opacity:1;transform:translateY(0)}
+
+/* ---- CARD ---- */
+.card{
+  background:var(--white);
+  border-radius:14px;
+  padding:32px 36px;
+  box-shadow:0 2px 16px rgba(0,0,0,.09);
+  margin-bottom:16px;
+}
+
+/* ---- SECTION HEADER ---- */
+.sec-hdr{
+  margin-bottom:28px;
+  padding-bottom:20px;
+  border-bottom:2px solid var(--gray-100);
+}
+.sec-hdr h2{
+  font-size:1.35rem;
+  color:var(--navy);
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.sec-hdr p{
+  color:var(--gray-500);
+  margin-top:6px;
+  font-size:.88rem;
+}
+.step-num{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;height:30px;
+  background:var(--gold);
+  color:var(--navy);
+  border-radius:50%;
+  font-size:.8rem;
+  font-weight:800;
+  flex-shrink:0;
+}
+
+/* ---- FORM ELEMENTS ---- */
+.fgrp{margin-bottom:22px}
+.fgrp label{
+  display:block;
+  font-weight:600;
+  color:var(--gray-700);
+  margin-bottom:7px;
+  font-size:.93rem;
+}
+.req{color:var(--red);margin-left:2px}
+.hint{
+  display:block;
+  color:var(--gray-500);
+  font-size:.79rem;
+  margin-top:4px;
+  font-weight:400;
+}
+.fgrp input[type=text],
+.fgrp input[type=tel],
+.fgrp input[type=email],
+.fgrp input[type=date],
+.fgrp input[type=number],
+.fgrp select,
+.fgrp textarea{
+  width:100%;
+  padding:10px 14px;
+  border:1.5px solid var(--gray-200);
+  border-radius:8px;
+  font-size:.93rem;
+  font-family:inherit;
+  color:var(--gray-900);
+  background:var(--white);
+  transition:border-color .15s,box-shadow .15s;
+  outline:none;
+  -webkit-appearance:none;
+}
+.fgrp input:focus,
+.fgrp select:focus,
+.fgrp textarea:focus{
+  border-color:var(--navy);
+  box-shadow:0 0 0 3px rgba(26,46,74,.1);
+}
+.fgrp input.err,
+.fgrp select.err,
+.fgrp textarea.err{
+  border-color:var(--red)!important;
+  background:var(--red-bg);
+}
+.err-msg{
+  color:var(--red);
+  font-size:.79rem;
+  margin-top:4px;
+}
+.fgrp textarea{resize:vertical;min-height:84px;line-height:1.55}
+.fgrp select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23374151' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:38px;
+}
+
+/* ---- RADIO CARDS ---- */
+.radio-list{display:flex;flex-direction:column;gap:8px}
+.radio-list.horiz{flex-direction:row;flex-wrap:wrap;gap:8px}
+.radio-list.large .r-card{padding:14px 18px;font-size:1rem}
+.r-card{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 15px;
+  border:1.5px solid var(--gray-200);
+  border-radius:8px;
+  cursor:pointer;
+  transition:border-color .15s,background .15s;
+  font-size:.91rem;
+  color:var(--gray-600);
+  user-select:none;
+  line-height:1.4;
+}
+.r-card:hover{border-color:var(--navy);background:var(--gray-50)}
+.r-card.sel{
+  border-color:var(--navy);
+  background:rgba(26,46,74,.06);
+  color:var(--navy);
+  font-weight:600;
+}
+.r-card input[type=radio]{
+  width:17px;height:17px;
+  accent-color:var(--navy);
+  flex-shrink:0;
+  cursor:pointer;
+}
+
+/* ---- CHECKBOX CARDS ---- */
+.chk-list{display:flex;flex-direction:column;gap:8px}
+.c-card{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 15px;
+  border:1.5px solid var(--gray-200);
+  border-radius:8px;
+  cursor:pointer;
+  transition:border-color .15s,background .15s;
+  font-size:.91rem;
+  color:var(--gray-600);
+  user-select:none;
+}
+.c-card:hover{border-color:var(--navy);background:var(--gray-50)}
+.c-card.sel{
+  border-color:var(--navy);
+  background:rgba(26,46,74,.06);
+  color:var(--navy);
+  font-weight:600;
+}
+.c-card input[type=checkbox]{
+  width:17px;height:17px;
+  accent-color:var(--navy);
+  flex-shrink:0;
+  cursor:pointer;
+}
+
+/* ---- INFO / WARNING BOXES ---- */
+.info-box{
+  background:var(--blue-bg);
+  border:1.5px solid var(--blue-border);
+  border-radius:8px;
+  padding:13px 16px;
+  font-size:.86rem;
+  color:var(--blue-text);
+  margin-bottom:20px;
+  line-height:1.55;
+}
+.warn-box{
+  background:var(--orange-bg);
+  border:1.5px solid var(--orange-border);
+  border-radius:8px;
+  padding:13px 16px;
+  font-size:.86rem;
+  color:var(--orange-text);
+  margin-bottom:20px;
+  line-height:1.55;
+  font-weight:500;
+}
+.danger-box{
+  background:var(--red-bg);
+  border:2px solid var(--red);
+  border-radius:8px;
+  padding:13px 16px;
+  font-size:.86rem;
+  color:#991b1b;
+  margin-bottom:20px;
+  line-height:1.55;
+  font-weight:600;
+}
+
+/* ---- CONDITIONAL FIELDS ---- */
+.cond{
+  display:none;
+  margin-top:12px;
+  padding:16px;
+  background:var(--gray-50);
+  border-left:3px solid var(--gold);
+  border-radius:0 8px 8px 0;
+}
+.cond.show{display:block}
+.cond .fgrp:last-child{margin-bottom:0}
+
+/* ---- DIVIDER ---- */
+hr.divider{border:none;border-top:1.5px solid var(--gray-100);margin:26px 0}
+
+/* ---- FORM GRID ---- */
+.f2col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ---- NAV BUTTONS ---- */
+.nav-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:4px;
+}
+.btn{
+  padding:12px 28px;
+  border-radius:8px;
+  font-size:.93rem;
+  font-weight:700;
+  cursor:pointer;
+  border:none;
+  font-family:inherit;
+  transition:background .15s,transform .1s,box-shadow .15s;
+  letter-spacing:.01em;
+}
+.btn:active{transform:scale(.98)}
+.btn-primary{
+  background:var(--navy);
+  color:var(--white);
+  box-shadow:0 2px 8px rgba(26,46,74,.3);
+}
+.btn-primary:hover{background:var(--navy-light);box-shadow:0 4px 12px rgba(26,46,74,.35)}
+.btn-back{
+  background:var(--gray-100);
+  color:var(--gray-600);
+  border:1.5px solid var(--gray-200);
+}
+.btn-back:hover{background:var(--gray-200)}
+.btn-gold{
+  background:var(--gold);
+  color:var(--navy);
+  box-shadow:0 2px 8px rgba(201,168,76,.35);
+}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-danger{background:var(--red);color:var(--white)}
+.btn-outline{
+  background:transparent;
+  color:var(--gray-600);
+  border:1.5px solid var(--gray-300);
+}
+.btn-outline:hover{background:var(--gray-100)}
+
+/* ---- SUBSECTION ---- */
+.subsec{
+  padding:18px 20px;
+  background:var(--gray-50);
+  border-radius:10px;
+  border:1px solid var(--gray-200);
+  margin-top:16px;
+}
+.subsec h3{
+  font-size:.88rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:14px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+/* ---- SUMMARY ---- */
+.sum-header{
+  text-align:center;
+  background:var(--navy);
+  color:var(--white);
+  padding:26px 32px;
+  border-radius:14px 14px 0 0;
+}
+.sum-header h2{
+  font-size:1.1rem;
+  letter-spacing:.08em;
+  color:var(--gold);
+  font-weight:800;
+}
+.sum-header h3{
+  font-size:.95rem;
+  font-weight:400;
+  color:rgba(255,255,255,.75);
+  margin-top:4px;
+  letter-spacing:.03em;
+}
+.sum-meta{
+  font-size:.78rem;
+  color:rgba(255,255,255,.5);
+  margin-top:14px;
+}
+.sum-meta strong{color:rgba(255,255,255,.75)}
+.sum-body{
+  background:var(--white);
+  border-radius:0 0 14px 14px;
+  padding:32px 36px;
+  box-shadow:0 2px 16px rgba(0,0,0,.09);
+}
+.sum-sec{margin-bottom:30px}
+.sum-sec h4{
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--navy);
+  border-bottom:2px solid var(--gold);
+  padding-bottom:6px;
+  margin-bottom:14px;
+}
+.sum-row{
+  display:flex;
+  gap:12px;
+  margin-bottom:9px;
+  font-size:.88rem;
+  line-height:1.5;
+}
+.sum-lbl{
+  color:var(--gray-500);
+  font-weight:600;
+  min-width:200px;
+  flex-shrink:0;
+}
+.sum-val{
+  color:var(--gray-900);
+  flex:1;
+}
+.esc-banner{
+  background:var(--red-bg);
+  border:2px solid var(--red);
+  border-radius:10px;
+  padding:20px 24px;
+  margin-bottom:28px;
+}
+.esc-banner h3{
+  color:var(--red);
+  font-size:1rem;
+  font-weight:800;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.esc-banner ul{list-style:none;padding:0}
+.esc-banner ul li{
+  color:#991b1b;
+  font-size:.86rem;
+  padding:4px 0 4px 22px;
+  position:relative;
+  font-weight:500;
+}
+.esc-banner ul li::before{content:"⚠";position:absolute;left:0}
+.sum-actions{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1.5px solid var(--gray-200);
+  flex-wrap:wrap;
+}
+.intake-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:24px;
+  padding:14px 18px;
+  background:var(--gray-50);
+  border-radius:10px;
+  border:1.5px solid var(--gray-200);
+}
+.intake-row label{
+  font-weight:700;
+  color:var(--gray-700);
+  white-space:nowrap;
+  font-size:.88rem;
+}
+.intake-row input{
+  flex:1;
+  padding:8px 12px;
+  border:1.5px solid var(--gray-200);
+  border-radius:6px;
+  font-family:inherit;
+  font-size:.88rem;
+  outline:none;
+  transition:border-color .15s;
+}
+.intake-row input:focus{border-color:var(--navy)}
+
+/* ---- FOOTER ---- */
+.app-footer{
+  text-align:center;
+  padding:14px;
+  color:var(--gray-400);
+  font-size:.72rem;
+  background:var(--white);
+  border-top:1px solid var(--gray-200);
+}
+
+/* ---- UTILITY ---- */
+.hidden{display:none!important}
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.mt16{margin-top:16px}
+.big-q{
+  font-size:1.15rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:14px;
+}
+
+/* ---- PRINT ---- */
+@media print{
+  .app-header,
+  .progress-wrap,
+  .nav-row,
+  .sum-actions,
+  .app-footer,
+  .intake-row,
+  #no-print-note{display:none!important}
+  body{background:white}
+  .main-content{margin:0;padding:0;max-width:100%}
+  .section{display:none!important}
+  #section-summary{display:block!important;opacity:1!important;transform:none!important}
+  .sum-header{
+    background:white!important;
+    color:black!important;
+    border:2px solid var(--navy);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .sum-header h2{color:var(--navy)!important}
+  .sum-header h3{color:#444!important}
+  .sum-header .sum-meta{color:#666!important}
+  .sum-body{box-shadow:none;padding:20px 0}
+  .esc-banner{
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .sum-sec h4{
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .sum-row{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>NABHOLZ APPRAISAL GROUP</h1>
+  <p>Private Appraisal Order Intake</p>
+</header>
+
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-label" id="progress-label">Getting started…</div>
+</div>
+
+<main class="main-content">
+
+<!-- ===== SECTION 1: CLIENT & PROPERTY ===== -->
+<div class="section active" id="section-s1">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">1</span>Client &amp; Property Information</h2>
+    <p>Enter the client's contact details and property information before we branch to the specific appraisal type.</p>
+  </div>
+
+  <div class="f2col">
+    <div class="fgrp">
+      <label for="s1_name">Client Full Name <span class="req">*</span></label>
+      <input type="text" id="s1_name" placeholder="First and Last Name" autocomplete="name">
+    </div>
+    <div class="fgrp">
+      <label for="s1_phone">Client Phone <span class="req">*</span></label>
+      <input type="tel" id="s1_phone" placeholder="(555) 555-5555" autocomplete="tel">
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s1_email">Client Email <span class="req">*</span></label>
+    <input type="email" id="s1_email" placeholder="client@email.com" autocomplete="email">
+  </div>
+
+  <div class="fgrp">
+    <label for="s1_referral">How did the client hear about us? <span class="req">*</span></label>
+    <select id="s1_referral">
+      <option value="">— Select one —</option>
+      <option value="Referral – Attorney">Referral – Attorney</option>
+      <option value="Referral – Past Client">Referral – Past Client</option>
+      <option value="Referral – Realtor">Referral – Realtor</option>
+      <option value="Google/Web Search">Google / Web Search</option>
+      <option value="Repeat Client">Repeat Client</option>
+      <option value="Other">Other</option>
+    </select>
+    <div class="cond" id="cond_referral_other">
+      <div class="fgrp">
+        <label for="s1_referral_other">Please specify <span class="req">*</span></label>
+        <input type="text" id="s1_referral_other" placeholder="How did they hear about us?">
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fgrp">
+    <label for="s1_addr">Property Address – Street <span class="req">*</span></label>
+    <input type="text" id="s1_addr" placeholder="123 Main Street" autocomplete="street-address">
+  </div>
+
+  <div class="f2col">
+    <div class="fgrp">
+      <label for="s1_citystatezip">City, State, ZIP <span class="req">*</span></label>
+      <input type="text" id="s1_citystatezip" placeholder="Springfield, IL 62701">
+    </div>
+    <div class="fgrp">
+      <label for="s1_county">County <span class="req">*</span></label>
+      <input type="text" id="s1_county" placeholder="Sangamon County">
+      <span class="hint">County is required for the order form</span>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s1_proptype">Property Type <span class="req">*</span></label>
+    <select id="s1_proptype">
+      <option value="">— Select property type —</option>
+      <option value="Single Family Residential">Single Family Residential</option>
+      <option value="Multi-Family (2-4 units)">Multi-Family (2–4 units)</option>
+      <option value="Commercial">Commercial</option>
+      <option value="Land/Vacant">Land / Vacant</option>
+      <option value="Other">Other</option>
+    </select>
+    <div class="cond" id="cond_proptype_other">
+      <div class="fgrp">
+        <label for="s1_proptype_other">Describe property type <span class="req">*</span></label>
+        <input type="text" id="s1_proptype_other" placeholder="e.g. Mixed-use, condo, mobile home…">
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <span></span>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 2: PURPOSE ===== -->
+<div class="section" id="section-s2">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">2</span>Appraisal Purpose &amp; Intended Use</h2>
+    <p>These answers determine the scope of work, required effective date, report format, and fee.</p>
+  </div>
+
+  <div class="fgrp">
+    <div class="big-q">What is this appraisal for? <span class="req">*</span></div>
+    <div class="radio-list large" id="rg_purpose">
+      <label class="r-card"><input type="radio" name="purpose" value="estate"> Estate / Date of Death</label>
+      <label class="r-card"><input type="radio" name="purpose" value="divorce"> Divorce / Marital Dissolution</label>
+      <label class="r-card"><input type="radio" name="purpose" value="tax-appeal"> Property Tax Appeal</label>
+      <label class="r-card"><input type="radio" name="purpose" value="pre-listing"> Pre-Listing / Pre-Sale</label>
+      <label class="r-card"><input type="radio" name="purpose" value="bankruptcy"> Bankruptcy</label>
+      <label class="r-card"><input type="radio" name="purpose" value="insurance"> Insurance / Casualty Loss</label>
+      <label class="r-card"><input type="radio" name="purpose" value="pmi-removal"> PMI Removal</label>
+      <label class="r-card"><input type="radio" name="purpose" value="other"> Other / Not Sure</label>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="fgrp">
+    <div class="big-q">Who will use this appraisal? <span class="req">*</span><span class="hint" style="font-weight:400;font-size:.82rem;margin-left:6px;display:inline">(Select all that apply)</span></div>
+    <div class="chk-list" id="cg_users">
+      <label class="c-card"><input type="checkbox" name="users" value="client"> The client / homeowner</label>
+      <label class="c-card"><input type="checkbox" name="users" value="attorney" id="chk_attorney"> An attorney</label>
+      <label class="c-card"><input type="checkbox" name="users" value="cpa"> A CPA or tax advisor</label>
+      <label class="c-card"><input type="checkbox" name="users" value="irs"> The IRS</label>
+      <label class="c-card"><input type="checkbox" name="users" value="court"> A court / probate</label>
+      <label class="c-card"><input type="checkbox" name="users" value="lender"> A lender</label>
+      <label class="c-card"><input type="checkbox" name="users" value="heirs"> Other heirs or co-owners</label>
+    </div>
+
+    <div class="cond" id="cond_attorney">
+      <div class="subsec">
+        <h3>Attorney Information</h3>
+        <div class="f2col">
+          <div class="fgrp">
+            <label for="s2_atty_name">Attorney Name</label>
+            <input type="text" id="s2_atty_name" placeholder="Full name">
+          </div>
+          <div class="fgrp">
+            <label for="s2_atty_firm">Law Firm</label>
+            <input type="text" id="s2_atty_firm" placeholder="Firm name">
+          </div>
+        </div>
+        <div class="f2col">
+          <div class="fgrp">
+            <label for="s2_atty_phone">Attorney Phone</label>
+            <input type="tel" id="s2_atty_phone" placeholder="(555) 555-5555">
+          </div>
+          <div class="fgrp">
+            <label for="s2_atty_email">Attorney Email</label>
+            <input type="email" id="s2_atty_email" placeholder="attorney@firm.com">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3A: ESTATE ===== -->
+<div class="section" id="section-s3a">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Estate / Date-of-Death — A Few More Questions</h2>
+  </div>
+
+  <div class="info-box">
+    Date-of-death appraisals can serve several different purposes. The specific purpose determines the scope of work, report requirements, and fee. We need to identify which one applies.
+  </div>
+
+  <div class="fgrp">
+    <label>What specifically is this date-of-death appraisal for? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_estate_purpose">
+      <label class="r-card"><input type="radio" name="estate_purpose" value="IRS Estate Tax Filing (Form 706)"> IRS Estate Tax Filing (Form 706)</label>
+      <label class="r-card"><input type="radio" name="estate_purpose" value="Step-Up in Tax Basis"> Step-Up in Tax Basis (for heirs/CPA — not filed with IRS)</label>
+      <label class="r-card"><input type="radio" name="estate_purpose" value="Equitable Distribution Among Heirs"> Equitable Distribution Among Heirs</label>
+      <label class="r-card"><input type="radio" name="estate_purpose" value="Probate Court Filing"> Probate Court Filing</label>
+      <label class="r-card"><input type="radio" name="estate_purpose" value="Estate Sale / Pre-Listing"> Estate Sale / Pre-Listing (heirs want to sell)</label>
+      <label class="r-card"><input type="radio" name="estate_purpose" value="Not sure – need to discuss"> Not sure — need to discuss</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s3a_dod">Date of Death <span class="req">*</span></label>
+    <input type="date" id="s3a_dod">
+  </div>
+
+  <div class="fgrp">
+    <label>Do you need an alternate valuation date (6 months after date of death)? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_alt_val">
+      <label class="r-card"><input type="radio" name="alt_val" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="alt_val" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="alt_val" value="Not Sure"> Not Sure</label>
+    </div>
+    <div class="cond" id="cond_alt_val_yes">
+      <div class="warn-box" style="margin:0">⚠️ Alternate valuation date required — confirm with Tommy before quoting. This affects scope and fee.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Have any changes been made to the property since the date of death? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_estate_changes">
+      <label class="r-card"><input type="radio" name="estate_changes" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="estate_changes" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="estate_changes" value="Unknown"> Unknown</label>
+    </div>
+    <div class="cond" id="cond_estate_changes_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s3a_changes_desc">Describe the changes <span class="req">*</span></label>
+        <textarea id="s3a_changes_desc" placeholder="Renovations, additions, damage, demolished structures, etc."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Was the property occupied or vacant at the date of death? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_estate_occ">
+      <label class="r-card"><input type="radio" name="estate_occ" value="Occupied"> Occupied</label>
+      <label class="r-card"><input type="radio" name="estate_occ" value="Vacant"> Vacant</label>
+      <label class="r-card"><input type="radio" name="estate_occ" value="Unknown"> Unknown</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Does the client have photos of the property from around the date of death?</label>
+    <div class="radio-list horiz" id="rg_estate_photos">
+      <label class="r-card"><input type="radio" name="estate_photos" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="estate_photos" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="estate_photos" value="Unknown"> Unknown</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is this appraisal for probate court filing? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_estate_probate">
+      <label class="r-card"><input type="radio" name="estate_probate" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="estate_probate" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="estate_probate" value="Not Sure"> Not Sure</label>
+    </div>
+    <div class="cond" id="cond_estate_probate_yes">
+      <div class="danger-box">⚠️ ESCALATE TO TOMMY: Court submissions require USPAP-compliant report format. Do not quote until Tommy confirms scope.</div>
+      <div class="fgrp" style="margin:0">
+        <label for="s3a_court_deadline">Court deadline / filing date</label>
+        <input type="date" id="s3a_court_deadline">
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there a filing deadline with the IRS or court?</label>
+    <div class="radio-list horiz" id="rg_estate_deadline">
+      <label class="r-card"><input type="radio" name="estate_deadline" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="estate_deadline" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_estate_deadline_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s3a_deadline_date">Deadline date <span class="req">*</span></label>
+        <input type="date" id="s3a_deadline_date">
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3B: DIVORCE ===== -->
+<div class="section" id="section-s3b">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Divorce / Marital Dissolution — A Few More Questions</h2>
+  </div>
+
+  <div class="fgrp">
+    <label>What is the required effective date? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_div_effdate">
+      <label class="r-card"><input type="radio" name="div_effdate" value="Current date (date of inspection)"> Current date (date of inspection)</label>
+      <label class="r-card"><input type="radio" name="div_effdate" value="Date of separation"> Date of separation — I have the exact date</label>
+      <label class="r-card"><input type="radio" name="div_effdate" value="Date specified by attorney/court"> Date specified by attorney / court</label>
+      <label class="r-card"><input type="radio" name="div_effdate" value="Not sure"> Not sure</label>
+    </div>
+    <div class="cond" id="cond_div_effdate_specific">
+      <div class="fgrp" style="margin:0">
+        <label for="s3b_effdate">Enter the required effective date <span class="req">*</span></label>
+        <input type="date" id="s3b_effdate">
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is both parties' representation involved, or is this unilateral? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_div_parties">
+      <label class="r-card"><input type="radio" name="div_parties" value="Agreed-upon by both parties (joint order)"> Agreed-upon by both parties (joint order)</label>
+      <label class="r-card"><input type="radio" name="div_parties" value="Ordered by one party only"> Ordered by one party only</label>
+      <label class="r-card"><input type="radio" name="div_parties" value="Unknown"> Unknown</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there active litigation or a court deadline? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_div_litigation">
+      <label class="r-card"><input type="radio" name="div_litigation" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="div_litigation" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_div_litigation_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s3b_court_deadline">Court deadline / filing date <span class="req">*</span></label>
+        <input type="date" id="s3b_court_deadline">
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Should we anticipate being asked to testify or be deposed? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_div_testify">
+      <label class="r-card"><input type="radio" name="div_testify" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="div_testify" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="div_testify" value="Possibly"> Possibly</label>
+    </div>
+    <div class="cond" id="cond_div_testify_yes">
+      <div class="warn-box" style="margin:0">⚠️ Potential testimony — affects fee. Confirm with Tommy before quoting.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Are dual effective dates needed? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_div_dual">
+      <label class="r-card"><input type="radio" name="div_dual" value="Yes – date of separation AND current"> Yes — date of separation AND current date</label>
+      <label class="r-card"><input type="radio" name="div_dual" value="No – one date only"> No — one date only</label>
+      <label class="r-card"><input type="radio" name="div_dual" value="Not sure"> Not sure</label>
+    </div>
+    <div class="cond" id="cond_div_dual_yes">
+      <div class="warn-box" style="margin:0">⚠️ Dual-date assignment — higher fee applies. Confirm with Tommy.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Have any improvements or damage occurred since the effective date?</label>
+    <div class="radio-list horiz" id="rg_div_changes">
+      <label class="r-card"><input type="radio" name="div_changes" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="div_changes" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="div_changes" value="Unknown"> Unknown</label>
+    </div>
+    <div class="cond" id="cond_div_changes_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s3b_changes_desc">Describe changes</label>
+        <textarea id="s3b_changes_desc" placeholder="Describe any improvements, damage, or alterations…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3C: TAX APPEAL ===== -->
+<div class="section" id="section-s3c">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Property Tax Appeal — A Few More Questions</h2>
+  </div>
+
+  <div class="fgrp">
+    <label for="s3c_taxyear">What tax year is being appealed? <span class="req">*</span></label>
+    <input type="text" id="s3c_taxyear" placeholder="e.g. 2025" style="max-width:160px">
+  </div>
+
+  <div class="fgrp">
+    <label>What is the assessment effective date? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_tax_effdate">
+      <label class="r-card"><input type="radio" name="tax_effdate" value="January 1 of the appeal year"> January 1 of the appeal year</label>
+      <label class="r-card"><input type="radio" name="tax_effdate" value="Other"> Other — specify</label>
+    </div>
+    <div class="cond" id="cond_tax_effdate_other">
+      <div class="fgrp" style="margin:0">
+        <label for="s3c_effdate">Assessment effective date <span class="req">*</span></label>
+        <input type="date" id="s3c_effdate">
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s3c_deadline">Appeal filing deadline <span class="req">*</span></label>
+    <input type="date" id="s3c_deadline">
+    <span class="hint">⚠️ Tax appeals have strict deadlines. Get this date now.</span>
+  </div>
+
+  <div class="fgrp">
+    <label for="s3c_county">County / Jurisdiction <span class="req">*</span></label>
+    <input type="text" id="s3c_county" placeholder="County name">
+    <span class="hint">Pre-filled from property county if entered above.</span>
+  </div>
+
+  <div class="fgrp">
+    <label>Has the client consulted a property tax consultant or attorney?</label>
+    <div class="radio-list horiz" id="rg_tax_consultant">
+      <label class="r-card"><input type="radio" name="tax_consultant" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="tax_consultant" value="No"> No</label>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3D: PRE-LISTING ===== -->
+<div class="section" id="section-s3d">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Pre-Listing / Pre-Sale — A Few More Questions</h2>
+  </div>
+
+  <div class="info-box">
+    This is the simplest private assignment. Confirm this is truly a pre-listing need and not an estate or legal situation in disguise.
+  </div>
+
+  <div class="fgrp">
+    <label>Is the property currently listed for sale? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_listing_listed">
+      <label class="r-card"><input type="radio" name="listing_listed" value="Yes – currently listed"> Yes — currently listed</label>
+      <label class="r-card"><input type="radio" name="listing_listed" value="No – planning to list"> No — planning to list</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is a Realtor involved? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_listing_realtor">
+      <label class="r-card"><input type="radio" name="listing_realtor" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="listing_realtor" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_listing_realtor_yes">
+      <div class="f2col" style="margin:0">
+        <div class="fgrp" style="margin:0">
+          <label for="s3d_realtor_name">Realtor Name</label>
+          <input type="text" id="s3d_realtor_name" placeholder="Full name">
+        </div>
+        <div class="fgrp" style="margin:0">
+          <label for="s3d_realtor_phone">Realtor Phone</label>
+          <input type="tel" id="s3d_realtor_phone" placeholder="(555) 555-5555">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there any estate, divorce, legal, or tax matter connected to this sale? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_listing_legal">
+      <label class="r-card"><input type="radio" name="listing_legal" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="listing_legal" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="listing_legal" value="Not Sure"> Not Sure</label>
+    </div>
+    <div class="cond" id="cond_listing_legal_flag">
+      <div class="warn-box" style="margin:0">⚠️ This may not be a standard pre-listing assignment. Ask more questions and consider escalating to Tommy.</div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3E: BANKRUPTCY ===== -->
+<div class="section" id="section-s3e">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Bankruptcy — A Few More Questions</h2>
+  </div>
+
+  <div class="info-box">
+    Bankruptcy appraisals always involve legal proceedings. Attorney info and court deadlines are required.
+  </div>
+
+  <div class="fgrp">
+    <label for="s3e_filing_date">Bankruptcy filing date <span class="req">*</span></label>
+    <input type="date" id="s3e_filing_date">
+  </div>
+
+  <div class="fgrp">
+    <label>Chapter of bankruptcy? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_bk_chapter">
+      <label class="r-card"><input type="radio" name="bk_chapter" value="Chapter 7"> Chapter 7</label>
+      <label class="r-card"><input type="radio" name="bk_chapter" value="Chapter 11"> Chapter 11</label>
+      <label class="r-card"><input type="radio" name="bk_chapter" value="Chapter 13"> Chapter 13</label>
+      <label class="r-card"><input type="radio" name="bk_chapter" value="Unknown"> Unknown</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s3e_court_deadline">Court deadline for appraisal submission <span class="req">*</span></label>
+    <input type="date" id="s3e_court_deadline">
+  </div>
+
+  <div class="fgrp">
+    <label>Should we anticipate being asked to testify? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_bk_testify">
+      <label class="r-card"><input type="radio" name="bk_testify" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="bk_testify" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="bk_testify" value="Possibly"> Possibly</label>
+    </div>
+    <div class="cond" id="cond_bk_testify_yes">
+      <div class="warn-box" style="margin:0">⚠️ Potential testimony — affects fee. Confirm with Tommy.</div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3F: INSURANCE ===== -->
+<div class="section" id="section-s3f">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Insurance / Casualty Loss — A Few More Questions</h2>
+  </div>
+
+  <div class="fgrp">
+    <label>What type of loss or event? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_ins_type">
+      <label class="r-card"><input type="radio" name="ins_type" value="Fire"> Fire</label>
+      <label class="r-card"><input type="radio" name="ins_type" value="Storm/Wind"> Storm / Wind</label>
+      <label class="r-card"><input type="radio" name="ins_type" value="Flood"> Flood</label>
+      <label class="r-card"><input type="radio" name="ins_type" value="Other"> Other</label>
+    </div>
+    <div class="cond" id="cond_ins_type_other">
+      <div class="fgrp" style="margin:0">
+        <label for="s3f_ins_type_other">Describe event type <span class="req">*</span></label>
+        <input type="text" id="s3f_ins_type_other" placeholder="Describe the loss event">
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>What effective date(s) are needed? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_ins_dates">
+      <label class="r-card"><input type="radio" name="ins_dates" value="Pre-loss value only"> Pre-loss value only</label>
+      <label class="r-card"><input type="radio" name="ins_dates" value="Post-loss value only"> Post-loss value only</label>
+      <label class="r-card"><input type="radio" name="ins_dates" value="Both pre-loss and post-loss"> Both pre-loss and post-loss</label>
+      <label class="r-card"><input type="radio" name="ins_dates" value="Not sure"> Not sure</label>
+    </div>
+    <div class="cond" id="cond_ins_dates_both">
+      <div class="warn-box" style="margin:0">⚠️ Dual-date assignment — affects fee and scope. Confirm with Tommy.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Does the client have photos from before the damage?</label>
+    <div class="radio-list horiz" id="rg_ins_photos">
+      <label class="r-card"><input type="radio" name="ins_photos" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="ins_photos" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="ins_photos" value="Some"> Some</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there an insurance adjuster report or repair estimate available?</label>
+    <div class="radio-list horiz" id="rg_ins_adjuster">
+      <label class="r-card"><input type="radio" name="ins_adjuster" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="ins_adjuster" value="No"> No</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is this for an IRS casualty loss deduction? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_ins_irs">
+      <label class="r-card"><input type="radio" name="ins_irs" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="ins_irs" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="ins_irs" value="Not Sure"> Not Sure</label>
+    </div>
+    <div class="cond" id="cond_ins_irs_yes">
+      <div class="danger-box" style="margin:0">⚠️ IRS casualty loss requires qualified appraisal. Escalate to Tommy.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there active litigation with the insurance company? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_ins_litigation">
+      <label class="r-card"><input type="radio" name="ins_litigation" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="ins_litigation" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_ins_litigation_yes">
+      <div class="subsec" style="margin:0">
+        <h3>Insurance Litigation — Attorney &amp; Court Info</h3>
+        <div class="f2col">
+          <div class="fgrp">
+            <label for="s3f_atty_name">Attorney Name</label>
+            <input type="text" id="s3f_atty_name" placeholder="Full name">
+          </div>
+          <div class="fgrp">
+            <label for="s3f_atty_firm">Law Firm</label>
+            <input type="text" id="s3f_atty_firm" placeholder="Firm name">
+          </div>
+        </div>
+        <div class="f2col">
+          <div class="fgrp">
+            <label for="s3f_atty_phone">Attorney Phone</label>
+            <input type="tel" id="s3f_atty_phone" placeholder="(555) 555-5555">
+          </div>
+          <div class="fgrp">
+            <label for="s3f_court_deadline">Court deadline</label>
+            <input type="date" id="s3f_court_deadline">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3G: PMI ===== -->
+<div class="section" id="section-s3g">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 PMI Removal — A Few More Questions</h2>
+  </div>
+
+  <div class="warn-box">
+    <strong>Important:</strong> Some lenders require appraisals ordered through their own AMC. Confirm the lender will accept a privately ordered appraisal <em>before</em> accepting this order.
+  </div>
+
+  <div class="fgrp">
+    <label for="s3g_lender">What lender / servicer is the client's mortgage with? <span class="req">*</span></label>
+    <input type="text" id="s3g_lender" placeholder="Bank name or servicer">
+  </div>
+
+  <div class="fgrp">
+    <label>Has the client confirmed their lender accepts privately ordered appraisals for PMI removal? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_pmi_confirmed">
+      <label class="r-card"><input type="radio" name="pmi_confirmed" value="Yes – confirmed"> Yes — confirmed</label>
+      <label class="r-card"><input type="radio" name="pmi_confirmed" value="No – not yet confirmed"> No — not yet confirmed</label>
+      <label class="r-card"><input type="radio" name="pmi_confirmed" value="Unknown"> Unknown</label>
+    </div>
+    <div class="cond" id="cond_pmi_unconfirmed">
+      <div class="danger-box" style="margin:0">⚠️ Do not accept this order until the client confirms their lender will accept it. Many lenders require their own AMC.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s3g_loan_balance">Approximate current loan balance (optional)</label>
+    <input type="text" id="s3g_loan_balance" placeholder="e.g. $285,000">
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 3H: OTHER ===== -->
+<div class="section" id="section-s3h">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">3</span>📋 Let's Figure This Out</h2>
+  </div>
+
+  <div class="info-box">
+    That's okay — clients often aren't sure of the right terminology. Let's gather what we know.
+  </div>
+
+  <div class="fgrp">
+    <label for="s3h_reason">In the client's own words, why do they need this appraisal? <span class="req">*</span></label>
+    <textarea id="s3h_reason" placeholder="Let the client explain in their own words…" style="min-height:100px"></textarea>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there a death involved?</label>
+    <div class="radio-list horiz" id="rg_other_death">
+      <label class="r-card"><input type="radio" name="other_death" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="other_death" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="other_death" value="Not Sure"> Not Sure</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there a legal matter, court, or attorney involved?</label>
+    <div class="radio-list horiz" id="rg_other_legal">
+      <label class="r-card"><input type="radio" name="other_legal" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="other_legal" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="other_legal" value="Not Sure"> Not Sure</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is there a deadline?</label>
+    <div class="radio-list horiz" id="rg_other_deadline">
+      <label class="r-card"><input type="radio" name="other_deadline" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="other_deadline" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_other_deadline_yes">
+      <div class="fgrp">
+        <label for="s3h_deadline_date">Deadline date</label>
+        <input type="date" id="s3h_deadline_date">
+      </div>
+      <div class="fgrp" style="margin:0">
+        <label for="s3h_deadline_note">Explain the deadline</label>
+        <input type="text" id="s3h_deadline_note" placeholder="What is this deadline for?">
+      </div>
+    </div>
+  </div>
+
+  <div class="danger-box">⚠️ Purpose unclear — escalate to Tommy before accepting or quoting this order.</div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 4: SPECIAL CONDITIONS ===== -->
+<div class="section" id="section-s4">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">4</span>Almost Done — Special Conditions</h2>
+    <p>A few final questions to make sure we've captured everything that could affect scope or fee.</p>
+  </div>
+
+  <div class="fgrp">
+    <label>Does this involve multiple parcels or a split tract? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_s4_parcels">
+      <label class="r-card"><input type="radio" name="s4_parcels" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="s4_parcels" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="s4_parcels" value="Unknown"> Unknown</label>
+    </div>
+    <div class="cond" id="cond_s4_parcels_yes">
+      <div class="warn-box" style="margin:0">⚠️ Multiple parcels — affects scope and fee. Confirm with Tommy.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Is this a partial interest appraisal? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_s4_partial">
+      <label class="r-card"><input type="radio" name="s4_partial" value="Yes – partial interest"> Yes — partial interest (e.g., 50% undivided)</label>
+      <label class="r-card"><input type="radio" name="s4_partial" value="No – fee simple"> No — fee simple</label>
+      <label class="r-card"><input type="radio" name="s4_partial" value="Unknown"> Unknown</label>
+    </div>
+    <div class="cond" id="cond_s4_partial_yes">
+      <div class="warn-box" style="margin:0">⚠️ Partial interest — affects scope and fee. Confirm with Tommy.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Are there any proposed or hypothetical improvements? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_s4_hypo">
+      <label class="r-card"><input type="radio" name="s4_hypo" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="s4_hypo" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_s4_hypo_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s4_hypo_desc">Describe the hypothetical condition <span class="req">*</span></label>
+        <textarea id="s4_hypo_desc" placeholder="What improvements are proposed or assumed?"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Any known environmental issues, flood zone concerns, easements, or title encumbrances? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_s4_env">
+      <label class="r-card"><input type="radio" name="s4_env" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="s4_env" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="s4_env" value="Unknown"> Unknown</label>
+    </div>
+    <div class="cond" id="cond_s4_env_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s4_env_desc">Describe <span class="req">*</span></label>
+        <textarea id="s4_env_desc" placeholder="Describe known issues…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div id="s4_testify_group" class="fgrp">
+    <label>Is testimony or deposition anticipated? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_s4_testify">
+      <label class="r-card"><input type="radio" name="s4_testify" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="s4_testify" value="No"> No</label>
+      <label class="r-card"><input type="radio" name="s4_testify" value="Possibly"> Possibly</label>
+    </div>
+    <div class="cond" id="cond_s4_testify_yes">
+      <div class="warn-box" style="margin:0">⚠️ Potential testimony — affects fee. Confirm with Tommy before quoting.</div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Any time sensitivity or hard deadline? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_s4_deadline">
+      <label class="r-card"><input type="radio" name="s4_deadline" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="s4_deadline" value="No"> No</label>
+    </div>
+    <div class="cond" id="cond_s4_deadline_yes">
+      <div class="f2col" style="margin:0">
+        <div class="fgrp" style="margin:0">
+          <label for="s4_deadline_date">Deadline date</label>
+          <input type="date" id="s4_deadline_date">
+        </div>
+        <div class="fgrp" style="margin:0">
+          <label for="s4_deadline_note">Explain the deadline</label>
+          <input type="text" id="s4_deadline_note" placeholder="What is this deadline for?">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label for="s4_notes">Additional notes (optional)</label>
+    <textarea id="s4_notes" placeholder="Anything else we should know before quoting this order?"></textarea>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-primary" onclick="goNext()">Continue &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SECTION 5: FEE & CONFIRMATION ===== -->
+<div class="section" id="section-s5">
+<div class="card">
+  <div class="sec-hdr">
+    <h2><span class="step-num">5</span>Fee &amp; Order Confirmation</h2>
+    <p>Capture the fee quote and order status before generating the intake summary.</p>
+  </div>
+
+  <div class="fgrp">
+    <label>Has a fee been quoted to the client? <span class="req">*</span></label>
+    <div class="radio-list horiz" id="rg_s5_fee_quoted">
+      <label class="r-card"><input type="radio" name="s5_fee_quoted" value="Yes"> Yes</label>
+      <label class="r-card"><input type="radio" name="s5_fee_quoted" value="No – pending Tommy review"> No — pending Tommy review</label>
+    </div>
+    <div class="cond" id="cond_s5_fee_yes">
+      <div class="fgrp" style="margin:0">
+        <label for="s5_fee_amount">Fee quoted</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;color:var(--gray-600);font-size:1.1rem">$</span>
+          <input type="text" id="s5_fee_amount" placeholder="e.g. 500" style="max-width:180px">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Payment terms discussed? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_s5_payment">
+      <label class="r-card"><input type="radio" name="s5_payment" value="Full payment upfront"> Full payment upfront</label>
+      <label class="r-card"><input type="radio" name="s5_payment" value="Deposit required"> Deposit required</label>
+      <label class="r-card"><input type="radio" name="s5_payment" value="Net terms"> Net terms</label>
+      <label class="r-card"><input type="radio" name="s5_payment" value="Not yet discussed"> Not yet discussed</label>
+    </div>
+  </div>
+
+  <div class="fgrp">
+    <label>Order accepted? <span class="req">*</span></label>
+    <div class="radio-list" id="rg_s5_accepted">
+      <label class="r-card"><input type="radio" name="s5_accepted" value="Yes – order accepted"> Yes — order accepted</label>
+      <label class="r-card"><input type="radio" name="s5_accepted" value="No – pending escalation to Tommy"> No — pending escalation to Tommy</label>
+      <label class="r-card"><input type="radio" name="s5_accepted" value="Holding – waiting on client info"> Holding — waiting on client info</label>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-back" onclick="goBack()">&larr; Back</button>
+    <button class="btn btn-gold" onclick="goNext()">Generate Order Summary &rarr;</button>
+  </div>
+</div>
+</div>
+
+
+<!-- ===== SUMMARY ===== -->
+<div class="section" id="section-summary">
+  <div class="intake-row" id="intake-by-row">
+    <label for="intake_by">Intake completed by:</label>
+    <input type="text" id="intake_by" placeholder="Your name">
+  </div>
+
+  <div class="sum-header">
+    <h2>NABHOLZ APPRAISAL GROUP</h2>
+    <h3>PRIVATE APPRAISAL ORDER — INTAKE SUMMARY</h3>
+    <div class="sum-meta">
+      <div><strong>Date / Time:</strong> <span id="sum_datetime"></span></div>
+      <div style="margin-top:4px"><strong>Intake Completed By:</strong> <span id="sum_intake_by">—</span></div>
+    </div>
+  </div>
+
+  <div class="sum-body" id="sum-body">
+    <!-- Generated by JS -->
+  </div>
+
+  <div class="sum-actions" id="no-print-note">
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Print Order Form</button>
+    <button class="btn btn-outline" onclick="startNewOrder()">↩ Start New Order</button>
+  </div>
+</div>
+
+</main>
+
+<footer class="app-footer">
+  Nabholz Appraisal Group Internal Tool &nbsp;·&nbsp; Built with Hermes
+</footer>
+
+<script>
+// ===================================================
+//  NABHOLZ APPRAISAL GROUP — ORDER INTAKE WIZARD
+// ===================================================
+
+// ---------- STATE ----------
+let currentSectionId = 's1';
+let sectionHistory   = [];
+let orderData        = {};
+let escalationFlags  = [];
+let testimonyAskedInBranch = false;
+
+// ---------- PROGRESS CONFIG ----------
+const progressMap = {
+  s1: {pct:14, label:'Step 1 of 6 — Client & Property'},
+  s2: {pct:28, label:'Step 2 of 6 — Appraisal Purpose'},
+  s3a:{pct:46, label:'Step 3 of 6 — Estate Details'},
+  s3b:{pct:46, label:'Step 3 of 6 — Divorce Details'},
+  s3c:{pct:46, label:'Step 3 of 6 — Tax Appeal Details'},
+  s3d:{pct:46, label:'Step 3 of 6 — Pre-Listing Details'},
+  s3e:{pct:46, label:'Step 3 of 6 — Bankruptcy Details'},
+  s3f:{pct:46, label:'Step 3 of 6 — Insurance Details'},
+  s3g:{pct:46, label:'Step 3 of 6 — PMI Removal Details'},
+  s3h:{pct:46, label:'Step 3 of 6 — Order Clarification'},
+  s4: {pct:66, label:'Step 4 of 6 — Special Conditions'},
+  s5: {pct:84, label:'Step 5 of 6 — Fee & Confirmation'},
+  summary:{pct:100, label:'Complete — Order Summary'}
+};
+
+// ---------- NAVIGATION ----------
+function goNext() {
+  if (!validateSection(currentSectionId)) return;
+  collectSection(currentSectionId);
+  const next = getNextSection(currentSectionId);
+  if (!next) return;
+  sectionHistory.push(currentSectionId);
+  if (next === 'summary') buildSummary();
+  transition(currentSectionId, next);
+}
+
+function goBack() {
+  if (sectionHistory.length === 0) return;
+  const prev = sectionHistory.pop();
+  transition(currentSectionId, prev);
+}
+
+function getNextSection(id) {
+  if (id === 's1')  return 's2';
+  if (id === 's2') {
+    const p = getRadio('purpose');
+    const map = {estate:'s3a',divorce:'s3b','tax-appeal':'s3c','pre-listing':'s3d',
+                 bankruptcy:'s3e',insurance:'s3f','pmi-removal':'s3g',other:'s3h'};
+    return map[p] || null;
+  }
+  if (id.startsWith('s3')) return 's4';
+  if (id === 's4')  return 's5';
+  if (id === 's5')  return 'summary';
+  return null;
+}
+
+function transition(fromId, toId) {
+  const fromEl = document.getElementById('section-' + fromId);
+  const toEl   = document.getElementById('section-' + toId);
+  fromEl.classList.remove('visible');
+  setTimeout(() => {
+    fromEl.classList.remove('active');
+    toEl.classList.add('active');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        toEl.classList.add('visible');
+      });
+    });
+    currentSectionId = toId;
+    updateProgress(toId);
+    window.scrollTo({top:0, behavior:'smooth'});
+    // Post-init for certain sections
+    if (toId === 's3c') prefillTaxCounty();
+    if (toId === 's4')  configureS4();
+    if (toId === 'summary') {
+      document.getElementById('sum_datetime').textContent = new Date().toLocaleString();
+    }
+  }, 200);
+}
+
+function updateProgress(id) {
+  const cfg = progressMap[id] || {pct:0, label:''};
+  document.getElementById('progress-fill').style.width = cfg.pct + '%';
+  document.getElementById('progress-label').textContent = cfg.label;
+}
+
+// ---------- HELPERS ----------
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function getChecked(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(e=>e.value);
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function setVal(id, v) {
+  const el = document.getElementById(id);
+  if (el) el.value = v;
+}
+
+function showCond(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+
+function markError(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('err');
+  let errEl = el.parentElement.querySelector('.err-msg');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.className = 'err-msg';
+    el.parentElement.appendChild(errEl);
+  }
+  errEl.textContent = msg || 'This field is required.';
+}
+
+function clearErrors(sectionEl) {
+  sectionEl.querySelectorAll('.err').forEach(e => e.classList.remove('err'));
+  sectionEl.querySelectorAll('.err-msg').forEach(e => e.remove());
+}
+
+// ---------- RADIO CARD HIGHLIGHT ----------
+function initRadioGroup(groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  group.querySelectorAll('.r-card').forEach(card => {
+    const inp = card.querySelector('input[type=radio]');
+    inp.addEventListener('change', () => {
+      group.querySelectorAll('.r-card').forEach(c => c.classList.remove('sel'));
+      if (inp.checked) card.classList.add('sel');
+    });
+    // Restore selection if already checked (back nav)
+    if (inp.checked) card.classList.add('sel');
+  });
+}
+
+function initCheckboxGroup(groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  group.querySelectorAll('.c-card').forEach(card => {
+    const inp = card.querySelector('input[type=checkbox]');
+    inp.addEventListener('change', () => {
+      card.classList.toggle('sel', inp.checked);
+    });
+    if (inp.checked) card.classList.add('sel');
+  });
+}
+
+// ---------- SECTION 1 INIT ----------
+function initS1() {
+  initSelect('s1_referral', v => showCond('cond_referral_other', v === 'Other'));
+  initSelect('s1_proptype', v => showCond('cond_proptype_other', v === 'Other'));
+}
+
+function initSelect(id, fn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('change', () => fn(el.value));
+  fn(el.value);
+}
+
+// ---------- SECTION 2 INIT ----------
+function initS2() {
+  initRadioGroup('rg_purpose');
+  initCheckboxGroup('cg_users');
+  document.querySelectorAll('input[name="users"]').forEach(chk => {
+    chk.addEventListener('change', () => {
+      const attyChecked = document.getElementById('chk_attorney').checked;
+      showCond('cond_attorney', attyChecked);
+      // sync sel class
+      chk.closest('.c-card').classList.toggle('sel', chk.checked);
+    });
+  });
+  // Restore
+  const attyChecked = document.getElementById('chk_attorney').checked;
+  showCond('cond_attorney', attyChecked);
+}
+
+// ---------- SECTION 3A INIT ----------
+function initS3a() {
+  initRadioGroup('rg_estate_purpose');
+  initRadioGroup('rg_alt_val');
+  initRadioGroup('rg_estate_changes');
+  initRadioGroup('rg_estate_occ');
+  initRadioGroup('rg_estate_photos');
+  initRadioGroup('rg_estate_probate');
+  initRadioGroup('rg_estate_deadline');
+
+  bindRadio('alt_val',       v => showCond('cond_alt_val_yes', v === 'Yes'));
+  bindRadio('estate_changes',v => showCond('cond_estate_changes_yes', v === 'Yes'));
+  bindRadio('estate_probate',v => showCond('cond_estate_probate_yes', v === 'Yes'));
+  bindRadio('estate_deadline',v => showCond('cond_estate_deadline_yes', v === 'Yes'));
+}
+
+// ---------- SECTION 3B INIT ----------
+function initS3b() {
+  initRadioGroup('rg_div_effdate');
+  initRadioGroup('rg_div_parties');
+  initRadioGroup('rg_div_litigation');
+  initRadioGroup('rg_div_testify');
+  initRadioGroup('rg_div_dual');
+  initRadioGroup('rg_div_changes');
+
+  bindRadio('div_effdate', v => showCond('cond_div_effdate_specific', v && v !== 'Current date (date of inspection)'));
+  bindRadio('div_litigation', v => showCond('cond_div_litigation_yes', v === 'Yes'));
+  bindRadio('div_testify', v => showCond('cond_div_testify_yes', v === 'Yes' || v === 'Possibly'));
+  bindRadio('div_dual', v => showCond('cond_div_dual_yes', v && v.startsWith('Yes')));
+  bindRadio('div_changes', v => showCond('cond_div_changes_yes', v === 'Yes'));
+}
+
+// ---------- SECTION 3C INIT ----------
+function initS3c() {
+  initRadioGroup('rg_tax_effdate');
+  initRadioGroup('rg_tax_consultant');
+  bindRadio('tax_effdate', v => showCond('cond_tax_effdate_other', v === 'Other'));
+}
+
+function prefillTaxCounty() {
+  const county = val('s1_county');
+  if (county) setVal('s3c_county', county);
+}
+
+// ---------- SECTION 3D INIT ----------
+function initS3d() {
+  initRadioGroup('rg_listing_listed');
+  initRadioGroup('rg_listing_realtor');
+  initRadioGroup('rg_listing_legal');
+  bindRadio('listing_realtor', v => showCond('cond_listing_realtor_yes', v === 'Yes'));
+  bindRadio('listing_legal', v => showCond('cond_listing_legal_flag', v === 'Yes' || v === 'Not Sure'));
+}
+
+// ---------- SECTION 3E INIT ----------
+function initS3e() {
+  initRadioGroup('rg_bk_chapter');
+  initRadioGroup('rg_bk_testify');
+  bindRadio('bk_testify', v => showCond('cond_bk_testify_yes', v === 'Yes' || v === 'Possibly'));
+}
+
+// ---------- SECTION 3F INIT ----------
+function initS3f() {
+  initRadioGroup('rg_ins_type');
+  initRadioGroup('rg_ins_dates');
+  initRadioGroup('rg_ins_photos');
+  initRadioGroup('rg_ins_adjuster');
+  initRadioGroup('rg_ins_irs');
+  initRadioGroup('rg_ins_litigation');
+  bindRadio('ins_type', v => showCond('cond_ins_type_other', v === 'Other'));
+  bindRadio('ins_dates', v => showCond('cond_ins_dates_both', v === 'Both pre-loss and post-loss'));
+  bindRadio('ins_irs', v => showCond('cond_ins_irs_yes', v === 'Yes'));
+  bindRadio('ins_litigation', v => showCond('cond_ins_litigation_yes', v === 'Yes'));
+}
+
+// ---------- SECTION 3G INIT ----------
+function initS3g() {
+  initRadioGroup('rg_pmi_confirmed');
+  bindRadio('pmi_confirmed', v => showCond('cond_pmi_unconfirmed', v === 'No – not yet confirmed' || v === 'Unknown'));
+}
+
+// ---------- SECTION 3H INIT ----------
+function initS3h() {
+  initRadioGroup('rg_other_death');
+  initRadioGroup('rg_other_legal');
+  initRadioGroup('rg_other_deadline');
+  bindRadio('other_deadline', v => showCond('cond_other_deadline_yes', v === 'Yes'));
+}
+
+// ---------- SECTION 4 INIT ----------
+function initS4() {
+  initRadioGroup('rg_s4_parcels');
+  initRadioGroup('rg_s4_partial');
+  initRadioGroup('rg_s4_hypo');
+  initRadioGroup('rg_s4_env');
+  initRadioGroup('rg_s4_testify');
+  initRadioGroup('rg_s4_deadline');
+  bindRadio('s4_parcels', v => showCond('cond_s4_parcels_yes', v === 'Yes'));
+  bindRadio('s4_partial', v => showCond('cond_s4_partial_yes', v && v.startsWith('Yes')));
+  bindRadio('s4_hypo', v => showCond('cond_s4_hypo_yes', v === 'Yes'));
+  bindRadio('s4_env', v => showCond('cond_s4_env_yes', v === 'Yes'));
+  bindRadio('s4_testify', v => showCond('cond_s4_testify_yes', v === 'Yes' || v === 'Possibly'));
+  bindRadio('s4_deadline', v => showCond('cond_s4_deadline_yes', v === 'Yes'));
+}
+
+function configureS4() {
+  // Hide testimony question if already answered in branch
+  const branchWithTestimony = ['s3b','s3e'];
+  const comingFrom = orderData._branch;
+  const el = document.getElementById('s4_testify_group');
+  if (el) {
+    if (branchWithTestimony.includes(comingFrom)) {
+      el.style.display = 'none';
+      testimonyAskedInBranch = true;
+    } else {
+      el.style.display = '';
+      testimonyAskedInBranch = false;
+    }
+  }
+  initS4();
+}
+
+// ---------- SECTION 5 INIT ----------
+function initS5() {
+  initRadioGroup('rg_s5_fee_quoted');
+  initRadioGroup('rg_s5_payment');
+  initRadioGroup('rg_s5_accepted');
+  bindRadio('s5_fee_quoted', v => showCond('cond_s5_fee_yes', v === 'Yes'));
+}
+
+// ---------- BIND RADIO HELPER ----------
+function bindRadio(name, fn) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(inp => {
+    inp.addEventListener('change', () => fn(inp.value));
+  });
+  // Trigger immediately to restore state on back-nav
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  if (checked) fn(checked.value);
+}
+
+// ---------- VALIDATION ----------
+function required(id, label) {
+  const v = val(id);
+  if (!v) { markError(id, `${label} is required.`); return false; }
+  return true;
+}
+
+function requiredRadio(name, label, sectionEl) {
+  const checked = sectionEl.querySelector(`input[name="${name}"]:checked`);
+  if (!checked) {
+    // Find the radio group and add error near it
+    const group = sectionEl.querySelector(`#rg_${name}`) || sectionEl.querySelector(`[id$="${name}"]`);
+    if (group) {
+      let errEl = group.nextElementSibling;
+      if (!errEl || !errEl.classList.contains('err-msg')) {
+        errEl = document.createElement('div');
+        errEl.className = 'err-msg';
+        group.parentElement.insertBefore(errEl, group.nextSibling);
+      }
+      errEl.textContent = `${label} is required.`;
+    }
+    return false;
+  }
+  return true;
+}
+
+function requiredCheckboxGroup(name, label, sectionEl) {
+  const checked = sectionEl.querySelectorAll(`input[name="${name}"]:checked`);
+  if (checked.length === 0) {
+    const group = sectionEl.getElementById ? sectionEl.getElementById('cg_users') : document.getElementById('cg_users');
+    // Add error below
+    const g = document.getElementById('cg_users');
+    if (g) {
+      let errEl = g.nextElementSibling;
+      if (!errEl || !errEl.classList.contains('err-msg')) {
+        errEl = document.createElement('div');
+        errEl.className = 'err-msg';
+        g.parentElement.insertBefore(errEl, g.nextSibling);
+      }
+      errEl.textContent = `${label} is required.`;
+    }
+    return false;
+  }
+  return true;
+}
+
+function validateSection(id) {
+  const sectionEl = document.getElementById('section-' + id);
+  clearErrors(sectionEl);
+  let ok = true;
+
+  if (id === 's1') {
+    if (!required('s1_name','Client Name')) ok=false;
+    if (!required('s1_phone','Client Phone')) ok=false;
+    if (!required('s1_email','Client Email')) ok=false;
+    if (!val('s1_referral')) { markError('s1_referral','Referral source is required.'); ok=false; }
+    if (val('s1_referral') === 'Other' && !required('s1_referral_other','Please specify')) ok=false;
+    if (!required('s1_addr','Property Address')) ok=false;
+    if (!required('s1_citystatezip','City, State, ZIP')) ok=false;
+    if (!required('s1_county','County')) ok=false;
+    if (!val('s1_proptype')) { markError('s1_proptype','Property type is required.'); ok=false; }
+    if (val('s1_proptype') === 'Other' && !required('s1_proptype_other','Property type description')) ok=false;
+  }
+
+  if (id === 's2') {
+    if (!getRadio('purpose')) {
+      addGroupError('rg_purpose','Appraisal purpose is required.'); ok=false;
+    }
+    if (getChecked('users').length === 0) {
+      addGroupError('cg_users','At least one intended user must be selected.'); ok=false;
+    }
+  }
+
+  if (id === 's3a') {
+    if (!getRadio('estate_purpose')) { addGroupError('rg_estate_purpose','This field is required.'); ok=false; }
+    if (!required('s3a_dod','Date of Death')) ok=false;
+    if (!getRadio('alt_val')) { addGroupError('rg_alt_val','This field is required.'); ok=false; }
+    if (!getRadio('estate_changes')) { addGroupError('rg_estate_changes','This field is required.'); ok=false; }
+    if (getRadio('estate_changes') === 'Yes' && !required('s3a_changes_desc','Description')) ok=false;
+    if (!getRadio('estate_occ')) { addGroupError('rg_estate_occ','This field is required.'); ok=false; }
+    if (!getRadio('estate_probate')) { addGroupError('rg_estate_probate','This field is required.'); ok=false; }
+    if (getRadio('estate_deadline') === 'Yes' && !required('s3a_deadline_date','Deadline date')) ok=false;
+  }
+
+  if (id === 's3b') {
+    if (!getRadio('div_effdate'))    { addGroupError('rg_div_effdate','This field is required.'); ok=false; }
+    if (getRadio('div_effdate') && getRadio('div_effdate') !== 'Current date (date of inspection)' && !required('s3b_effdate','Effective date')) ok=false;
+    if (!getRadio('div_parties'))    { addGroupError('rg_div_parties','This field is required.'); ok=false; }
+    if (!getRadio('div_litigation')) { addGroupError('rg_div_litigation','This field is required.'); ok=false; }
+    if (getRadio('div_litigation') === 'Yes' && !required('s3b_court_deadline','Court deadline')) ok=false;
+    if (!getRadio('div_testify'))    { addGroupError('rg_div_testify','This field is required.'); ok=false; }
+    if (!getRadio('div_dual'))       { addGroupError('rg_div_dual','This field is required.'); ok=false; }
+  }
+
+  if (id === 's3c') {
+    if (!required('s3c_taxyear','Tax year')) ok=false;
+    if (!getRadio('tax_effdate')) { addGroupError('rg_tax_effdate','This field is required.'); ok=false; }
+    if (getRadio('tax_effdate') === 'Other' && !required('s3c_effdate','Effective date')) ok=false;
+    if (!required('s3c_deadline','Appeal filing deadline')) ok=false;
+    if (!required('s3c_county','County')) ok=false;
+  }
+
+  if (id === 's3d') {
+    if (!getRadio('listing_listed')) { addGroupError('rg_listing_listed','This field is required.'); ok=false; }
+    if (!getRadio('listing_realtor')){ addGroupError('rg_listing_realtor','This field is required.'); ok=false; }
+    if (!getRadio('listing_legal'))  { addGroupError('rg_listing_legal','This field is required.'); ok=false; }
+  }
+
+  if (id === 's3e') {
+    if (!required('s3e_filing_date','Filing date')) ok=false;
+    if (!getRadio('bk_chapter'))  { addGroupError('rg_bk_chapter','This field is required.'); ok=false; }
+    if (!required('s3e_court_deadline','Court deadline')) ok=false;
+    if (!getRadio('bk_testify'))  { addGroupError('rg_bk_testify','This field is required.'); ok=false; }
+  }
+
+  if (id === 's3f') {
+    if (!getRadio('ins_type'))      { addGroupError('rg_ins_type','This field is required.'); ok=false; }
+    if (getRadio('ins_type') === 'Other' && !required('s3f_ins_type_other','Loss type description')) ok=false;
+    if (!getRadio('ins_dates'))     { addGroupError('rg_ins_dates','This field is required.'); ok=false; }
+    if (!getRadio('ins_irs'))       { addGroupError('rg_ins_irs','This field is required.'); ok=false; }
+    if (!getRadio('ins_litigation')){ addGroupError('rg_ins_litigation','This field is required.'); ok=false; }
+  }
+
+  if (id === 's3g') {
+    if (!required('s3g_lender','Lender name')) ok=false;
+    if (!getRadio('pmi_confirmed')) { addGroupError('rg_pmi_confirmed','This field is required.'); ok=false; }
+  }
+
+  if (id === 's3h') {
+    if (!required('s3h_reason','Client explanation')) ok=false;
+  }
+
+  if (id === 's4') {
+    if (!getRadio('s4_parcels')) { addGroupError('rg_s4_parcels','This field is required.'); ok=false; }
+    if (!getRadio('s4_partial')) { addGroupError('rg_s4_partial','This field is required.'); ok=false; }
+    if (!getRadio('s4_hypo'))    { addGroupError('rg_s4_hypo','This field is required.'); ok=false; }
+    if (getRadio('s4_hypo') === 'Yes' && !required('s4_hypo_desc','Description')) ok=false;
+    if (!getRadio('s4_env'))     { addGroupError('rg_s4_env','This field is required.'); ok=false; }
+    if (getRadio('s4_env') === 'Yes' && !required('s4_env_desc','Description')) ok=false;
+    if (!testimonyAskedInBranch && !getRadio('s4_testify')) { addGroupError('rg_s4_testify','This field is required.'); ok=false; }
+    if (!getRadio('s4_deadline')){ addGroupError('rg_s4_deadline','This field is required.'); ok=false; }
+  }
+
+  if (id === 's5') {
+    if (!getRadio('s5_fee_quoted')) { addGroupError('rg_s5_fee_quoted','This field is required.'); ok=false; }
+    if (!getRadio('s5_payment'))    { addGroupError('rg_s5_payment','This field is required.'); ok=false; }
+    if (!getRadio('s5_accepted'))   { addGroupError('rg_s5_accepted','This field is required.'); ok=false; }
+  }
+
+  if (!ok) {
+    // Scroll to first error
+    const firstErr = sectionEl.querySelector('.err, .err-msg');
+    if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  return ok;
+}
+
+function addGroupError(groupId, msg) {
+  const el = document.getElementById(groupId);
+  if (!el) return;
+  let errEl = el.parentElement.querySelector('.err-msg');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.className = 'err-msg';
+    el.parentElement.appendChild(errEl);
+  }
+  errEl.textContent = msg;
+}
+
+// ---------- DATA COLLECTION ----------
+function collectSection(id) {
+  if (id === 's1') {
+    orderData.clientName    = val('s1_name');
+    orderData.clientPhone   = val('s1_phone');
+    orderData.clientEmail   = val('s1_email');
+    orderData.referral      = val('s1_referral');
+    orderData.referralOther = val('s1_referral_other');
+    orderData.propAddr      = val('s1_addr');
+    orderData.propCityStateZip = val('s1_citystatezip');
+    orderData.propCounty    = val('s1_county');
+    orderData.propType      = val('s1_proptype');
+    orderData.propTypeOther = val('s1_proptype_other');
+  }
+
+  if (id === 's2') {
+    orderData.purpose    = getRadio('purpose');
+    orderData.intendedUsers = getChecked('users');
+    orderData.attyName   = val('s2_atty_name');
+    orderData.attyFirm   = val('s2_atty_firm');
+    orderData.attyPhone  = val('s2_atty_phone');
+    orderData.attyEmail  = val('s2_atty_email');
+    orderData._branch    = orderData.purpose === 'estate'      ? 's3a'
+                         : orderData.purpose === 'divorce'     ? 's3b'
+                         : orderData.purpose === 'tax-appeal'  ? 's3c'
+                         : orderData.purpose === 'pre-listing' ? 's3d'
+                         : orderData.purpose === 'bankruptcy'  ? 's3e'
+                         : orderData.purpose === 'insurance'   ? 's3f'
+                         : orderData.purpose === 'pmi-removal' ? 's3g'
+                         : 's3h';
+  }
+
+  if (id === 's3a') {
+    orderData.estate_purpose     = getRadio('estate_purpose');
+    orderData.estate_dod         = val('s3a_dod');
+    orderData.estate_alt_val     = getRadio('alt_val');
+    orderData.estate_changes     = getRadio('estate_changes');
+    orderData.estate_changes_desc= val('s3a_changes_desc');
+    orderData.estate_occ         = getRadio('estate_occ');
+    orderData.estate_photos      = getRadio('estate_photos');
+    orderData.estate_probate     = getRadio('estate_probate');
+    orderData.estate_court_deadline = val('s3a_court_deadline');
+    orderData.estate_deadline    = getRadio('estate_deadline');
+    orderData.estate_deadline_date = val('s3a_deadline_date');
+  }
+
+  if (id === 's3b') {
+    orderData.div_effdate        = getRadio('div_effdate');
+    orderData.div_effdate_specific = val('s3b_effdate');
+    orderData.div_parties        = getRadio('div_parties');
+    orderData.div_litigation     = getRadio('div_litigation');
+    orderData.div_court_deadline = val('s3b_court_deadline');
+    orderData.div_testify        = getRadio('div_testify');
+    orderData.div_dual           = getRadio('div_dual');
+    orderData.div_changes        = getRadio('div_changes');
+    orderData.div_changes_desc   = val('s3b_changes_desc');
+  }
+
+  if (id === 's3c') {
+    orderData.tax_year           = val('s3c_taxyear');
+    orderData.tax_effdate        = getRadio('tax_effdate');
+    orderData.tax_effdate_other  = val('s3c_effdate');
+    orderData.tax_deadline       = val('s3c_deadline');
+    orderData.tax_county         = val('s3c_county');
+    orderData.tax_consultant     = getRadio('tax_consultant');
+  }
+
+  if (id === 's3d') {
+    orderData.listing_listed     = getRadio('listing_listed');
+    orderData.listing_realtor    = getRadio('listing_realtor');
+    orderData.listing_realtor_name = val('s3d_realtor_name');
+    orderData.listing_realtor_phone = val('s3d_realtor_phone');
+    orderData.listing_legal      = getRadio('listing_legal');
+  }
+
+  if (id === 's3e') {
+    orderData.bk_filing_date     = val('s3e_filing_date');
+    orderData.bk_chapter         = getRadio('bk_chapter');
+    orderData.bk_court_deadline  = val('s3e_court_deadline');
+    orderData.bk_testify         = getRadio('bk_testify');
+  }
+
+  if (id === 's3f') {
+    orderData.ins_type           = getRadio('ins_type');
+    orderData.ins_type_other     = val('s3f_ins_type_other');
+    orderData.ins_dates          = getRadio('ins_dates');
+    orderData.ins_photos         = getRadio('ins_photos');
+    orderData.ins_adjuster       = getRadio('ins_adjuster');
+    orderData.ins_irs            = getRadio('ins_irs');
+    orderData.ins_litigation     = getRadio('ins_litigation');
+    orderData.ins_atty_name      = val('s3f_atty_name');
+    orderData.ins_atty_firm      = val('s3f_atty_firm');
+    orderData.ins_atty_phone     = val('s3f_atty_phone');
+    orderData.ins_court_deadline = val('s3f_court_deadline');
+  }
+
+  if (id === 's3g') {
+    orderData.pmi_lender         = val('s3g_lender');
+    orderData.pmi_confirmed      = getRadio('pmi_confirmed');
+    orderData.pmi_loan_balance   = val('s3g_loan_balance');
+  }
+
+  if (id === 's3h') {
+    orderData.other_reason       = val('s3h_reason');
+    orderData.other_death        = getRadio('other_death');
+    orderData.other_legal        = getRadio('other_legal');
+    orderData.other_deadline     = getRadio('other_deadline');
+    orderData.other_deadline_date = val('s3h_deadline_date');
+    orderData.other_deadline_note = val('s3h_deadline_note');
+  }
+
+  if (id === 's4') {
+    orderData.s4_parcels         = getRadio('s4_parcels');
+    orderData.s4_partial         = getRadio('s4_partial');
+    orderData.s4_hypo            = getRadio('s4_hypo');
+    orderData.s4_hypo_desc       = val('s4_hypo_desc');
+    orderData.s4_env             = getRadio('s4_env');
+    orderData.s4_env_desc        = val('s4_env_desc');
+    orderData.s4_testify         = testimonyAskedInBranch ? null : getRadio('s4_testify');
+    orderData.s4_deadline        = getRadio('s4_deadline');
+    orderData.s4_deadline_date   = val('s4_deadline_date');
+    orderData.s4_deadline_note   = val('s4_deadline_note');
+    orderData.s4_notes           = val('s4_notes');
+  }
+
+  if (id === 's5') {
+    orderData.s5_fee_quoted      = getRadio('s5_fee_quoted');
+    orderData.s5_fee_amount      = val('s5_fee_amount');
+    orderData.s5_payment         = getRadio('s5_payment');
+    orderData.s5_accepted        = getRadio('s5_accepted');
+  }
+}
+
+// ---------- ESCALATION ----------
+function computeEscalation() {
+  escalationFlags = [];
+  const d = orderData;
+
+  if (d.estate_probate === 'Yes') escalationFlags.push('Probate court submission required');
+  if (d.estate_purpose === 'IRS Estate Tax Filing (Form 706)') escalationFlags.push('IRS Estate Tax Filing (Form 706) — qualified appraisal required');
+  if (d.ins_irs === 'Yes') escalationFlags.push('IRS casualty loss deduction — qualified appraisal required');
+  if (d.div_litigation === 'Yes') escalationFlags.push('Active litigation / court proceedings (divorce)');
+  if (d.ins_litigation === 'Yes') escalationFlags.push('Active litigation with insurance company');
+  if (d._branch === 's3e') escalationFlags.push('Bankruptcy filing — active court proceedings');
+  if (d.div_testify === 'Yes' || d.div_testify === 'Possibly') escalationFlags.push('Potential testimony / deposition (divorce)');
+  if (d.bk_testify === 'Yes'  || d.bk_testify === 'Possibly')  escalationFlags.push('Potential testimony / deposition (bankruptcy)');
+  if (d.s4_testify === 'Yes'  || d.s4_testify === 'Possibly')  escalationFlags.push('Potential testimony / deposition');
+  if (d.div_dual && d.div_dual.startsWith('Yes')) escalationFlags.push('Dual effective dates required (divorce)');
+  if (d.ins_dates === 'Both pre-loss and post-loss') escalationFlags.push('Dual effective dates — pre-loss and post-loss');
+  if (d.s4_partial && d.s4_partial.startsWith('Yes')) escalationFlags.push('Partial interest appraisal — affects scope and fee');
+  if (d.s4_parcels === 'Yes') escalationFlags.push('Multiple parcels / split tract — affects scope and fee');
+  if (d.estate_alt_val === 'Yes') escalationFlags.push('Alternate valuation date (6 months) requested');
+  if (d.purpose === 'other' || d._branch === 's3h') escalationFlags.push('Purpose unclear — escalate before accepting or quoting');
+  if (d.pmi_confirmed === 'No – not yet confirmed' || d.pmi_confirmed === 'Unknown') escalationFlags.push('PMI removal — lender acceptance of private appraisal unconfirmed');
+  if (d.intendedUsers && d.intendedUsers.includes('attorney') && d.attyName) {
+    escalationFlags.push(`Attorney involved: ${d.attyName}${d.attyFirm ? ' / ' + d.attyFirm : ''} — verify relationship`);
+  } else if (d.intendedUsers && d.intendedUsers.includes('attorney')) {
+    escalationFlags.push('Attorney involved — verify relationship and obtain contact info');
+  }
+  if (d.intendedUsers && d.intendedUsers.includes('irs')) escalationFlags.push('IRS listed as intended user — confirm appraisal format requirements');
+  if (d.intendedUsers && d.intendedUsers.includes('court')) escalationFlags.push('Court / probate listed as intended user — USPAP compliance required');
+}
+
+// ---------- SUMMARY BUILDER ----------
+function buildSummary() {
+  collectSection('s5');
+  computeEscalation();
+
+  const d = orderData;
+  const body = document.getElementById('sum-body');
+  body.innerHTML = '';
+
+  // Intake by listener
+  document.getElementById('intake_by').addEventListener('input', function() {
+    document.getElementById('sum_intake_by').textContent = this.value || '—';
+  });
+
+  // Escalation banner
+  if (escalationFlags.length > 0) {
+    let flagList = escalationFlags.map(f => `<li>${f}</li>`).join('');
+    body.insertAdjacentHTML('beforeend', `
+      <div class="esc-banner">
+        <h3>⚠️ ESCALATE TO TOMMY BEFORE PROCEEDING</h3>
+        <ul>${flagList}</ul>
+      </div>
+    `);
+  }
+
+  // Helper to add a section
+  function addSection(title, rows) {
+    const filtered = rows.filter(r => r[1] && r[1].toString().trim() !== '');
+    if (filtered.length === 0) return;
+    let html = `<div class="sum-sec"><h4>${title}</h4>`;
+    filtered.forEach(([label, value]) => {
+      html += `<div class="sum-row"><span class="sum-lbl">${label}</span><span class="sum-val">${value}</span></div>`;
+    });
+    html += '</div>';
+    body.insertAdjacentHTML('beforeend', html);
+  }
+
+  // Referral display
+  let referralDisplay = d.referral || '';
+  if (d.referral === 'Other' && d.referralOther) referralDisplay += ` — ${d.referralOther}`;
+
+  // Property type
+  let propTypeDisplay = d.propType || '';
+  if (d.propType === 'Other' && d.propTypeOther) propTypeDisplay += ` — ${d.propTypeOther}`;
+
+  // Purpose label
+  const purposeLabels = {estate:'Estate / Date of Death', divorce:'Divorce / Marital Dissolution',
+    'tax-appeal':'Property Tax Appeal','pre-listing':'Pre-Listing / Pre-Sale',
+    bankruptcy:'Bankruptcy',insurance:'Insurance / Casualty Loss','pmi-removal':'PMI Removal',other:'Other / Not Sure'};
+
+  // Intended users
+  const userLabels = {client:'The client / homeowner', attorney:'An attorney', cpa:'A CPA or tax advisor',
+    irs:'The IRS', court:'A court / probate', lender:'A lender', heirs:'Other heirs or co-owners'};
+  const usersDisplay = (d.intendedUsers||[]).map(u => userLabels[u]||u).join(', ');
+
+  // 1. Client Info
+  addSection('CLIENT INFORMATION', [
+    ['Client Name', d.clientName],
+    ['Phone', d.clientPhone],
+    ['Email', d.clientEmail],
+    ['Referral Source', referralDisplay],
+  ]);
+
+  // 2. Property Info
+  addSection('PROPERTY INFORMATION', [
+    ['Street Address', d.propAddr],
+    ['City, State, ZIP', d.propCityStateZip],
+    ['County', d.propCounty],
+    ['Property Type', propTypeDisplay],
+  ]);
+
+  // 3. Order Details
+  let orderRows = [
+    ['Appraisal Purpose', purposeLabels[d.purpose] || d.purpose],
+    ['Intended Users', usersDisplay],
+  ];
+
+  if (d._branch === 's3a') {
+    orderRows = orderRows.concat([
+      ['Date-of-Death Purpose', d.estate_purpose],
+      ['Date of Death', formatDate(d.estate_dod)],
+      ['Alternate Valuation Date', d.estate_alt_val],
+      ['Property Changes Since DOD', d.estate_changes + (d.estate_changes_desc ? ': ' + d.estate_changes_desc : '')],
+      ['Occupancy at DOD', d.estate_occ],
+      ['Client Has DOD Photos', d.estate_photos],
+      ['Probate Court Filing', d.estate_probate],
+      ['Court Deadline', formatDate(d.estate_court_deadline)],
+      ['IRS/Court Filing Deadline', d.estate_deadline === 'Yes' ? formatDate(d.estate_deadline_date) : d.estate_deadline],
+    ]);
+  }
+
+  if (d._branch === 's3b') {
+    orderRows = orderRows.concat([
+      ['Required Effective Date', d.div_effdate + (d.div_effdate_specific ? ': ' + formatDate(d.div_effdate_specific) : '')],
+      ['Parties Representation', d.div_parties],
+      ['Active Litigation', d.div_litigation + (d.div_court_deadline ? ' — Deadline: ' + formatDate(d.div_court_deadline) : '')],
+      ['Testimony Anticipated', d.div_testify],
+      ['Dual Effective Dates', d.div_dual],
+      ['Changes Since Effective Date', d.div_changes + (d.div_changes_desc ? ': ' + d.div_changes_desc : '')],
+    ]);
+  }
+
+  if (d._branch === 's3c') {
+    orderRows = orderRows.concat([
+      ['Tax Year Appealed', d.tax_year],
+      ['Assessment Effective Date', d.tax_effdate + (d.tax_effdate_other ? ': ' + formatDate(d.tax_effdate_other) : '')],
+      ['Appeal Filing Deadline', formatDate(d.tax_deadline)],
+      ['Jurisdiction / County', d.tax_county],
+      ['Tax Consultant / Attorney Involved', d.tax_consultant],
+    ]);
+  }
+
+  if (d._branch === 's3d') {
+    orderRows = orderRows.concat([
+      ['Currently Listed', d.listing_listed],
+      ['Realtor Involved', d.listing_realtor + (d.listing_realtor_name ? ': ' + d.listing_realtor_name : '') + (d.listing_realtor_phone ? ' | ' + d.listing_realtor_phone : '')],
+      ['Legal/Estate Matter Connected', d.listing_legal],
+    ]);
+  }
+
+  if (d._branch === 's3e') {
+    orderRows = orderRows.concat([
+      ['Bankruptcy Filing Date', formatDate(d.bk_filing_date)],
+      ['Chapter', d.bk_chapter],
+      ['Court Submission Deadline', formatDate(d.bk_court_deadline)],
+      ['Testimony Anticipated', d.bk_testify],
+    ]);
+  }
+
+  if (d._branch === 's3f') {
+    const lossType = d.ins_type === 'Other' ? `Other — ${d.ins_type_other}` : d.ins_type;
+    orderRows = orderRows.concat([
+      ['Loss / Event Type', lossType],
+      ['Effective Date(s) Needed', d.ins_dates],
+      ['Pre-Loss Photos Available', d.ins_photos],
+      ['Adjuster Report Available', d.ins_adjuster],
+      ['IRS Casualty Loss Deduction', d.ins_irs],
+      ['Active Insurance Litigation', d.ins_litigation],
+    ]);
+  }
+
+  if (d._branch === 's3g') {
+    orderRows = orderRows.concat([
+      ['Lender / Servicer', d.pmi_lender],
+      ['Lender Acceptance Confirmed', d.pmi_confirmed],
+      ['Approximate Loan Balance', d.pmi_loan_balance],
+    ]);
+  }
+
+  if (d._branch === 's3h') {
+    orderRows = orderRows.concat([
+      ['Client Explanation', d.other_reason],
+      ['Death Involved', d.other_death],
+      ['Legal Matter Involved', d.other_legal],
+      ['Deadline', d.other_deadline === 'Yes' ? (formatDate(d.other_deadline_date) + (d.other_deadline_note ? ': ' + d.other_deadline_note : '')) : d.other_deadline],
+    ]);
+  }
+
+  addSection('ORDER DETAILS', orderRows);
+
+  // 4. Special Conditions
+  addSection('SPECIAL CONDITIONS', [
+    ['Multiple Parcels', d.s4_parcels],
+    ['Partial Interest', d.s4_partial],
+    ['Hypothetical Improvements', d.s4_hypo + (d.s4_hypo_desc ? ': ' + d.s4_hypo_desc : '')],
+    ['Environmental / Encumbrances', d.s4_env + (d.s4_env_desc ? ': ' + d.s4_env_desc : '')],
+    ['Testimony Anticipated', d.s4_testify || (testimonyAskedInBranch ? '(addressed in order details)' : '')],
+    ['Hard Deadline', d.s4_deadline === 'Yes' ? (formatDate(d.s4_deadline_date) + (d.s4_deadline_note ? ' — ' + d.s4_deadline_note : '')) : d.s4_deadline],
+  ]);
+
+  // 5. Attorney / Third Party
+  let attyRows = [];
+  if (d.intendedUsers && d.intendedUsers.includes('attorney')) {
+    attyRows = [
+      ['Attorney Name', d.attyName],
+      ['Law Firm', d.attyFirm],
+      ['Attorney Phone', d.attyPhone],
+      ['Attorney Email', d.attyEmail],
+    ];
+  }
+  if (d.ins_atty_name) {
+    attyRows = attyRows.concat([
+      ['Insurance Litigation Attorney', d.ins_atty_name],
+      ['Insurance Litigation Firm', d.ins_atty_firm],
+      ['Insurance Atty Phone', d.ins_atty_phone],
+    ]);
+  }
+  if (d.listing_realtor_name) {
+    attyRows.push(['Realtor', d.listing_realtor_name + (d.listing_realtor_phone ? ' | ' + d.listing_realtor_phone : '')]);
+  }
+  addSection('ATTORNEY / THIRD PARTY CONTACT', attyRows);
+
+  // 6. Deadlines
+  let deadlineRows = [];
+  if (d.estate_court_deadline) deadlineRows.push(['Estate Court Deadline', formatDate(d.estate_court_deadline)]);
+  if (d.estate_deadline_date)  deadlineRows.push(['IRS/Court Filing Deadline', formatDate(d.estate_deadline_date)]);
+  if (d.div_court_deadline)    deadlineRows.push(['Divorce Court Deadline', formatDate(d.div_court_deadline)]);
+  if (d.tax_deadline)          deadlineRows.push(['Tax Appeal Filing Deadline', formatDate(d.tax_deadline)]);
+  if (d.bk_court_deadline)     deadlineRows.push(['Bankruptcy Court Deadline', formatDate(d.bk_court_deadline)]);
+  if (d.ins_court_deadline)    deadlineRows.push(['Insurance Litigation Deadline', formatDate(d.ins_court_deadline)]);
+  if (d.other_deadline_date)   deadlineRows.push(['Other Deadline', formatDate(d.other_deadline_date) + (d.other_deadline_note ? ' — ' + d.other_deadline_note : '')]);
+  if (d.s4_deadline_date)      deadlineRows.push(['Additional Hard Deadline', formatDate(d.s4_deadline_date) + (d.s4_deadline_note ? ' — ' + d.s4_deadline_note : '')]);
+  addSection('DEADLINES', deadlineRows);
+
+  // 7. Fee & Payment
+  addSection('FEE & PAYMENT', [
+    ['Fee Quoted', d.s5_fee_quoted === 'Yes' ? `Yes — $${d.s5_fee_amount}` : d.s5_fee_quoted],
+    ['Payment Terms', d.s5_payment],
+    ['Order Status', d.s5_accepted],
+  ]);
+
+  // 8. Notes
+  addSection('ADDITIONAL NOTES', [
+    ['Notes', d.s4_notes],
+  ]);
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  try {
+    const [y,m,day] = d.split('-');
+    return `${m}/${day}/${y}`;
+  } catch(e) { return d; }
+}
+
+// ---------- NEW ORDER ----------
+function startNewOrder() {
+  if (confirm('Start a new order? All current data will be cleared.')) {
+    orderData = {};
+    escalationFlags = [];
+    sectionHistory = [];
+    testimonyAskedInBranch = false;
+    // Reset all form inputs
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.type === 'checkbox' || el.type === 'radio') {
+        el.checked = false;
+        el.closest('.r-card, .c-card')?.classList.remove('sel');
+      } else {
+        el.value = '';
+      }
+    });
+    // Hide all conditional fields
+    document.querySelectorAll('.cond').forEach(el => el.classList.remove('show'));
+    // Reset section visibility
+    document.querySelectorAll('.section').forEach(el => {
+      el.classList.remove('active','visible');
+    });
+    currentSectionId = 's1';
+    const s1 = document.getElementById('section-s1');
+    s1.classList.add('active');
+    requestAnimationFrame(() => requestAnimationFrame(() => s1.classList.add('visible')));
+    updateProgress('s1');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+// ---------- INIT ----------
+document.addEventListener('DOMContentLoaded', () => {
+  // Init all sections
+  initS1();
+  initS2();
+  initS3a();
+  initS3b();
+  initS3c();
+  initS3d();
+  initS3e();
+  initS3f();
+  initS3g();
+  initS3h();
+  initS5();
+  // Show s1 with animation
+  updateProgress('s1');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.getElementById('section-s1').classList.add('visible');
+    });
+  });
+});
+</script>
+</body>
+</html>
