@@ -1508,6 +1508,7 @@ hr.divider{border:none;border-top:1.5px solid var(--gray-100);margin:26px 0}
 
   <div class="sum-actions" id="no-print-note">
     <button class="btn btn-primary" onclick="window.print()">🖨️ Print Order Form</button>
+    <button class="btn btn-gold" onclick="saveAsPDF()">⬇️ Save as PDF</button>
     <button class="btn btn-monday" id="mondayBtn" onclick="sendToMonday()">📋 Send to Monday.com</button>
     <button class="btn btn-outline" onclick="startNewOrder()">↩ Start New Order</button>
   </div>
@@ -2475,6 +2476,16 @@ async function sendToMonday() {
     btn.style.background = '';
     alert('Monday.com error: ' + err.message);
   }
+}
+
+function saveAsPDF() {
+  const d = orderData;
+  const addr = [d.propAddr, d.propCityStateZip].filter(Boolean).join(', ') || 'New-Order';
+  // Set document title so browser uses it as the suggested filename
+  const origTitle = document.title;
+  document.title = 'Nabholz Order — ' + addr;
+  window.print();
+  document.title = origTitle;
 }
 
 function startNewOrder() {
