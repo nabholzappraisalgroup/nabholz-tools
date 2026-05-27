@@ -1508,7 +1508,7 @@ hr.divider{border:none;border-top:1.5px solid var(--gray-100);margin:26px 0}
 
   <div class="sum-actions" id="no-print-note">
     <button class="btn btn-primary" onclick="window.print()">🖨️ Print Order Form</button>
-    <button class="btn btn-monday" onclick="sendToMonday()">📋 Send to Monday.com</button>
+    <button class="btn btn-monday" id="mondayBtn" onclick="sendToMonday()">📋 Send to Monday.com</button>
     <button class="btn btn-outline" onclick="startNewOrder()">↩ Start New Order</button>
   </div>
 </div>
@@ -2406,40 +2406,75 @@ function formatDate(d) {
 }
 
 // ---------- NEW ORDER ----------
-function sendToMonday() {
+async function sendToMonday() {
   const d = orderData;
-  const address = [d.s1_street, d.s1_city].filter(Boolean).join(', ') || 'New Appraisal Order';
-  const subject = encodeURIComponent(address);
+  const address = [d.propAddr, d.propCityStateZip].filter(Boolean).join(', ') || 'New Private Order';
 
-  // Build a clean plain-text body from the summary div
-  const summaryEl = document.getElementById('sum-body');
-  let bodyText = 'NABHOLZ APPRAISAL GROUP — PRIVATE ORDER INTAKE\n';
-  bodyText += 'Date: ' + new Date().toLocaleString() + '\n';
+  // Build a detailed notes block for the Inspection Notes field
+  let notes = '📋 Private Order — Intake via Nabholz Tools\n';
+  notes += 'Date: ' + new Date().toLocaleString() + '\n';
   const intakeBy = document.getElementById('intake_by')?.value;
-  if (intakeBy) bodyText += 'Intake by: ' + intakeBy + '\n';
-  bodyText += '\n';
-
-  // Escalation flags
+  if (intakeBy) notes += 'Intake by: ' + intakeBy + '\n';
+  notes += '\n';
   if (escalationFlags.length > 0) {
-    bodyText += '⚠️ ESCALATE TO TOMMY BEFORE PROCEEDING\n';
-    escalationFlags.forEach(f => bodyText += '  • ' + f + '\n');
-    bodyText += '\n';
+    notes += '⚠️ ESCALATE TO TOMMY: ' + escalationFlags.join(' | ') + '\n\n';
+  }
+  if (d.purpose)     notes += 'Purpose: ' + d.purpose + '\n';
+  if (d.propCounty)  notes += 'County: ' + d.propCounty + '\n';
+  if (d.propType)    notes += 'Property Type: ' + d.propType + '\n';
+  if (d.referral)    notes += 'Referral Source: ' + d.referral + (d.referralOther ? ' — ' + d.referralOther : '') + '\n';
+  if (d.s4_notes)    notes += '\nAdditional Notes: ' + d.s4_notes + '\n';
+
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+  const colVals = {
+    date1: { date: today },               // Order In Date
+    text2: d.clientName  || '',           // Borrower Name (client)
+    text_mkpydagn: d.clientPhone || '',   // Borrower Phone
+    text_mkpyg87c: d.clientEmail || '',   // Borrower Email
+    text5: notes,                          // Inspection Notes (full summary)
+  };
+  if (d.s5_fee_quoted === 'Yes' && d.s5_fee_amount) {
+    colVals.numeric6 = parseFloat(d.s5_fee_amount) || 0; // Report Fee
   }
 
-  // Walk the summary sections and pull label/value pairs
-  summaryEl.querySelectorAll('.sum-section').forEach(sec => {
-    const title = sec.querySelector('.sum-section-title')?.textContent?.trim();
-    if (title) bodyText += '--- ' + title + ' ---\n';
-    sec.querySelectorAll('.sum-row').forEach(row => {
-      const label = row.querySelector('.sum-label')?.textContent?.trim();
-      const value = row.querySelector('.sum-value')?.textContent?.trim();
-      if (label && value) bodyText += label + ': ' + value + '\n';
-    });
-    bodyText += '\n';
-  });
+  const mutation = `mutation {
+    create_item(
+      board_id: 9499909718,
+      group_id: "emailed_pulses",
+      item_name: ${JSON.stringify(address)},
+      column_values: ${JSON.stringify(JSON.stringify(colVals))}
+    ) { id url }
+  }`;
 
-  const mailto = `mailto:new2025orders@nabholz-appraisal-company.us.monday.com?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-  window.location.href = mailto;
+  const btn = document.getElementById('mondayBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending...';
+
+  try {
+    const resp = await fetch('https://api.monday.com/v2', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjUzNTc4NDg2OCwiYWFpIjoxMSwidWlkIjo3NzEyNjMyNSwiaWFkIjoiMjAyNS0wNy0wN1QxNTo1NTo1OC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6Mjk5NDk0MjIsInJnbiI6InVzZTEifQ.HkFsYxuaySvVk4XjHsHYXvDaNrUlQ1_euP8_U5wV0DE',
+        'Content-Type': 'application/json',
+        'API-Version': '2023-10'
+      },
+      body: JSON.stringify({ query: mutation })
+    });
+    const result = await resp.json();
+    if (result.data?.create_item?.id) {
+      btn.textContent = '✅ Sent to Monday.com!';
+      btn.style.background = '#16a34a';
+      btn.style.cursor = 'default';
+    } else {
+      throw new Error(JSON.stringify(result.errors || result));
+    }
+  } catch (err) {
+    btn.textContent = '❌ Failed — try again';
+    btn.disabled = false;
+    btn.style.background = '';
+    alert('Monday.com error: ' + err.message);
+  }
 }
 
 function startNewOrder() {
