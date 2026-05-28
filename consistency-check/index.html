@@ -27,11 +27,17 @@
   --red: #dc2626;
   --red-bg: #fef2f2;
   --red-border: #fca5a5;
+  --red-light: #fee2e2;
+  --yellow: #d97706;
   --yellow-bg: #fffbeb;
   --yellow-border: #fde68a;
+  --yellow-light: #fef3c7;
   --green: #16a34a;
   --green-bg: #f0fdf4;
   --green-border: #86efac;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --blue-border: #93c5fd;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -241,6 +247,7 @@ body{
 .results{display:none;}
 .results.active{display:block;}
 
+/* RESULT HEADER - Summary Banner */
 .result-header{
   border-radius:10px;
   padding:20px 24px;
@@ -259,17 +266,160 @@ body{
 .result-header.stop .result-title{color:var(--red);}
 .result-subtitle{font-size:.85rem;margin-top:3px;opacity:.8;}
 
-.result-body{
+/* PROPERTY INFO */
+.property-info{
   background:var(--white);
   border-radius:10px;
-  padding:28px;
+  padding:20px 24px;
+  margin-bottom:16px;
   box-shadow:0 1px 4px rgba(0,0,0,.08);
-  line-height:1.7;
-  white-space:pre-wrap;
-  font-size:.9rem;
-  font-family:'Courier New',monospace;
+}
+.property-address{
+  font-family:'Poppins',sans-serif;
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:8px;
+}
+.check-date{
+  font-size:.82rem;
+  color:var(--gray-500);
 }
 
+/* SUMMARY COUNTS */
+.summary-counts{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+.count-badge{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:.88rem;
+  font-weight:600;
+}
+.count-badge.red{background:var(--red-light);color:var(--red);border:1px solid var(--red-border);}
+.count-badge.yellow{background:var(--yellow-light);color:var(--yellow);border:1px solid var(--yellow-border);}
+.count-badge.green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.count-badge.blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);}
+.count-dot{
+  width:12px;height:12px;border-radius:50%;
+}
+.count-badge.red .count-dot{background:var(--red);}
+.count-badge.yellow .count-dot{background:var(--yellow);}
+.count-badge.green .count-dot{background:var(--green);}
+.count-badge.blue .count-dot{background:var(--blue);}
+
+/* FINDING CARDS */
+.findings-section{
+  margin-bottom:24px;
+}
+.findings-section-title{
+  font-family:'Poppins',sans-serif;
+  font-size:.95rem;
+  font-weight:700;
+  color:var(--gray-700);
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.finding-card{
+  background:var(--white);
+  border-radius:10px;
+  padding:16px 20px;
+  margin-bottom:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+  border-left:4px solid var(--gray-300);
+}
+.finding-card.red{border-left-color:var(--red);background:linear-gradient(90deg, var(--red-bg) 0%, var(--white) 100%);}
+.finding-card.yellow{border-left-color:var(--yellow);background:linear-gradient(90deg, var(--yellow-bg) 0%, var(--white) 100%);}
+.finding-card.green{border-left-color:var(--green);background:linear-gradient(90deg, var(--green-bg) 0%, var(--white) 100%);}
+.finding-card.blue{border-left-color:var(--blue);background:linear-gradient(90deg, var(--blue-bg) 0%, var(--white) 100%);}
+
+.finding-header{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:8px;
+}
+.finding-badge{
+  flex-shrink:0;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:.72rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.finding-card.red .finding-badge{background:var(--red);color:white;}
+.finding-card.yellow .finding-badge{background:var(--yellow);color:white;}
+.finding-card.green .finding-badge{background:var(--green);color:white;}
+.finding-card.blue .finding-badge{background:var(--blue);color:white;}
+
+.finding-title{
+  font-weight:700;
+  color:var(--gray-900);
+  font-size:.95rem;
+  line-height:1.4;
+}
+.finding-detail{
+  font-size:.88rem;
+  color:var(--gray-600);
+  line-height:1.6;
+  margin-top:8px;
+}
+.finding-detail strong{color:var(--gray-800);}
+.finding-action{
+  margin-top:10px;
+  padding:10px 14px;
+  background:var(--gray-100);
+  border-radius:6px;
+  font-size:.84rem;
+  color:var(--gray-700);
+}
+.finding-action::before{
+  content:'→ ';
+  font-weight:700;
+  color:var(--navy);
+}
+
+/* DOCUMENTS REVIEWED */
+.docs-reviewed{
+  background:var(--white);
+  border-radius:10px;
+  padding:16px 20px;
+  margin-bottom:20px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+.docs-reviewed-title{
+  font-size:.88rem;
+  font-weight:700;
+  color:var(--gray-700);
+  margin-bottom:10px;
+}
+.docs-reviewed-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.doc-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 12px;
+  background:var(--gray-100);
+  border-radius:6px;
+  font-size:.8rem;
+  color:var(--gray-600);
+}
+.doc-chip::before{content:'📄';}
+
+/* ACTION ROW */
 .action-row{
   display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;
 }
@@ -300,6 +450,18 @@ body{
 .footer{
   background:var(--navy-dark);color:rgba(255,255,255,.5);
   text-align:center;padding:16px;font-size:.78rem;
+}
+
+/* PRINT STYLES */
+@media print {
+  body{background:white !important;}
+  .app-header{box-shadow:none;border-bottom:2px solid var(--navy);}
+  .nav-link, .drop-zone, .file-list, .run-wrap, .loading, .error-box, .action-row, .footer, .docs-card{display:none !important;}
+  .main{margin:0;padding:20px;max-width:100%;}
+  .results{display:block !important;}
+  .finding-card{break-inside:avoid;page-break-inside:avoid;}
+  .findings-section{break-inside:avoid;page-break-inside:avoid;}
+  @page{margin:0.5in;}
 }
 </style>
 </head>
@@ -365,7 +527,21 @@ body{
         <div class="result-subtitle" id="resultSubtitle"></div>
       </div>
     </div>
-    <div class="result-body" id="resultBody"></div>
+    
+    <div class="property-info" id="propertyInfo">
+      <div class="property-address" id="propertyAddress">Property Address</div>
+      <div class="check-date" id="checkDate"></div>
+    </div>
+    
+    <div class="summary-counts" id="summaryCounts"></div>
+    
+    <div class="docs-reviewed" id="docsReviewed">
+      <div class="docs-reviewed-title">Documents Reviewed</div>
+      <div class="docs-reviewed-list" id="docsReviewedList"></div>
+    </div>
+    
+    <div id="findingsContainer"></div>
+    
     <div class="action-row">
       <button class="btn-secondary" onclick="window.print()">🖨️ Print / Save PDF</button>
       <button class="btn-new" onclick="resetForm()">Run Another Check</button>
@@ -545,7 +721,7 @@ async function runCheck() {
       return;
     }
 
-    showResults(data.result);
+    showResults(data.result, documents.map(d => d.label));
   } catch (err) {
     loading.classList.remove('active');
     errorBox.textContent = 'Network error: ' + err.message + '. Check your internet connection and try again.';
@@ -554,36 +730,261 @@ async function runCheck() {
   }
 }
 
-function showResults(text) {
-  const results = document.getElementById('results');
+function parseStructuredResult(text) {
+  // Try to parse JSON if the API returns it
+  try {
+    if (text.trim().startsWith('{')) {
+      return JSON.parse(text);
+    }
+  } catch(e) {}
+  
+  // Otherwise parse the text format
+  const result = {
+    status: 'REVIEW REQUIRED',
+    property: '',
+    summary: '',
+    redFlags: [],
+    yellowFlags: [],
+    verified: [],
+    infoOnly: [],
+    unableToVerify: [],
+    actions: []
+  };
+  
+  // Detect status
+  const upper = text.toUpperCase();
+  if (upper.includes('STOP - OFFICE REVIEW') || upper.includes('STOP—OFFICE') || upper.includes('STOP: OFFICE')) {
+    result.status = 'STOP';
+  } else if (upper.includes('QC RESULT: PASS') || (upper.includes('PASS') && !upper.includes('RED FLAG') && !upper.includes('YELLOW FLAG'))) {
+    result.status = 'PASS';
+  }
+  
+  // Extract property address
+  const propMatch = text.match(/Property:\s*(.+?)(?:\n|$)/i);
+  if (propMatch) result.property = propMatch[1].trim();
+  
+  // Extract summary
+  const summaryMatch = text.match(/Summary:\s*(.+?)(?=\n\n|\nRED|$)/is);
+  if (summaryMatch) result.summary = summaryMatch[1].trim();
+  
+  // Parse red flags
+  const redSection = text.match(/RED FLAGS?:?\s*([\s\S]*?)(?=\nYELLOW FLAGS?|\nVERIFIED|\nINFORMATION ONLY|\nMISSING|\nRECOMMENDED|\nDISCREPANCY|$)/i);
+  if (redSection) {
+    result.redFlags = parseFindings(redSection[1]);
+  }
+  
+  // Parse yellow flags
+  const yellowSection = text.match(/YELLOW FLAGS?:?\s*([\s\S]*?)(?=\nVERIFIED|\nINFORMATION ONLY|\nMISSING|\nRECOMMENDED|\nDISCREPANCY|$)/i);
+  if (yellowSection) {
+    result.yellowFlags = parseFindings(yellowSection[1]);
+  }
+  
+  // Parse verified/OK
+  const verifiedSection = text.match(/(?:VERIFIED|OK)(?:\s*\/\s*OK)?:?\s*([\s\S]*?)(?=\nINFORMATION ONLY|\nMISSING|\nRECOMMENDED|$)/i);
+  if (verifiedSection) {
+    result.verified = parseBullets(verifiedSection[1]);
+  }
+  
+  // Parse info only
+  const infoSection = text.match(/INFORMATION ONLY:?\s*([\s\S]*?)(?=\nMISSING|\nRECOMMENDED|$)/i);
+  if (infoSection) {
+    result.infoOnly = parseBullets(infoSection[1]);
+  }
+  
+  // Parse unable to verify
+  const missingSection = text.match(/(?:MISSING|UNABLE TO VERIFY):?\s*([\s\S]*?)(?=\nRECOMMENDED|$)/i);
+  if (missingSection) {
+    result.unableToVerify = parseBullets(missingSection[1]);
+  }
+  
+  // Parse recommended actions
+  const actionsSection = text.match(/RECOMMENDED (?:STAFF )?ACTIONS?:?\s*([\s\S]*?)$/i);
+  if (actionsSection) {
+    result.actions = parseBullets(actionsSection[1]);
+  }
+  
+  return result;
+}
+
+function parseFindings(text) {
+  const findings = [];
+  // Split by numbered items or bullet points
+  const items = text.split(/(?:^|\n)\s*(?:\d+\.|[-•])\s*/).filter(s => s.trim());
+  
+  for (const item of items) {
+    const finding = { title: '', detail: '', action: '' };
+    
+    // First line is usually the title/issue
+    const lines = item.split('\n').filter(l => l.trim());
+    if (lines.length > 0) {
+      finding.title = lines[0].trim();
+    }
+    
+    // Look for source conflict
+    const sourceMatch = item.match(/source conflict:?\s*(.+?)(?=\n|recommended|$)/i);
+    if (sourceMatch) finding.detail = sourceMatch[1].trim();
+    
+    // Look for recommended action
+    const actionMatch = item.match(/recommended (?:action)?:?\s*(.+?)$/i);
+    if (actionMatch) finding.action = actionMatch[1].trim();
+    
+    // If no structured parts, use the whole item as title
+    if (!finding.detail && lines.length > 1) {
+      finding.detail = lines.slice(1).join(' ').replace(/[-•]\s*/g, '').trim();
+    }
+    
+    if (finding.title && !finding.title.match(/^none|^n\/a|^\(none/i)) {
+      findings.push(finding);
+    }
+  }
+  
+  return findings;
+}
+
+function parseBullets(text) {
+  return text.split(/\n/).map(l => l.replace(/^[\s\-•*\d.]+/, '').trim()).filter(l => l && !l.match(/^none|^n\/a|^\(none/i));
+}
+
+function showResults(text, docNames) {
+  const parsed = parseStructuredResult(text);
+  
+  // Set header
   const header = document.getElementById('resultHeader');
   const icon = document.getElementById('resultIcon');
   const title = document.getElementById('resultTitle');
   const subtitle = document.getElementById('resultSubtitle');
-  const body = document.getElementById('resultBody');
-
-  body.textContent = text;
-
-  const upper = text.toUpperCase();
-  if (upper.includes('STOP - OFFICE REVIEW REQUIRED') || upper.includes('STOP—OFFICE') || upper.includes('STOP: OFFICE')) {
+  
+  if (parsed.status === 'STOP') {
     header.className = 'result-header stop';
     icon.textContent = '🛑';
     title.textContent = 'STOP — OFFICE REVIEW REQUIRED';
     subtitle.textContent = 'Red flags found. Do not move this file forward until resolved.';
-  } else if (upper.includes('REVIEW REQUIRED')) {
-    header.className = 'result-header review';
-    icon.textContent = '⚠️';
-    title.textContent = 'REVIEW REQUIRED';
-    subtitle.textContent = 'Yellow flags found. Review and resolve before moving forward.';
-  } else {
+  } else if (parsed.status === 'PASS') {
     header.className = 'result-header pass';
     icon.textContent = '✅';
     title.textContent = 'PASS';
     subtitle.textContent = 'No flags found based on uploaded documents.';
+  } else {
+    header.className = 'result-header review';
+    icon.textContent = '⚠️';
+    title.textContent = 'REVIEW REQUIRED';
+    subtitle.textContent = 'Yellow flags found. Review and resolve before moving forward.';
   }
+  
+  // Property info
+  document.getElementById('propertyAddress').textContent = parsed.property || 'Property Address Not Detected';
+  document.getElementById('checkDate').textContent = 'Checked: ' + new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  
+  // Summary counts
+  const countsEl = document.getElementById('summaryCounts');
+  countsEl.innerHTML = '';
+  
+  if (parsed.redFlags.length > 0) {
+    countsEl.innerHTML += `<div class="count-badge red"><span class="count-dot"></span>${parsed.redFlags.length} Red Flag${parsed.redFlags.length > 1 ? 's' : ''}</div>`;
+  }
+  if (parsed.yellowFlags.length > 0) {
+    countsEl.innerHTML += `<div class="count-badge yellow"><span class="count-dot"></span>${parsed.yellowFlags.length} Yellow Flag${parsed.yellowFlags.length > 1 ? 's' : ''}</div>`;
+  }
+  if (parsed.verified.length > 0) {
+    countsEl.innerHTML += `<div class="count-badge green"><span class="count-dot"></span>${parsed.verified.length} Verified</div>`;
+  }
+  if (parsed.unableToVerify.length > 0) {
+    countsEl.innerHTML += `<div class="count-badge blue"><span class="count-dot"></span>${parsed.unableToVerify.length} Unable to Verify</div>`;
+  }
+  
+  // Documents reviewed
+  const docsListEl = document.getElementById('docsReviewedList');
+  docsListEl.innerHTML = docNames.map(name => `<span class="doc-chip">${name}</span>`).join('');
+  
+  // Findings
+  const container = document.getElementById('findingsContainer');
+  container.innerHTML = '';
+  
+  // Red flags section
+  if (parsed.redFlags.length > 0) {
+    container.innerHTML += `
+      <div class="findings-section">
+        <div class="findings-section-title">🔴 Red Flags — Stop File</div>
+        ${parsed.redFlags.map(f => renderFinding(f, 'red', 'Error')).join('')}
+      </div>
+    `;
+  }
+  
+  // Yellow flags section
+  if (parsed.yellowFlags.length > 0) {
+    container.innerHTML += `
+      <div class="findings-section">
+        <div class="findings-section-title">🟡 Yellow Flags — Review Required</div>
+        ${parsed.yellowFlags.map(f => renderFinding(f, 'yellow', 'Warning')).join('')}
+      </div>
+    `;
+  }
+  
+  // Verified section
+  if (parsed.verified.length > 0) {
+    container.innerHTML += `
+      <div class="findings-section">
+        <div class="findings-section-title">✅ Verified / OK</div>
+        ${parsed.verified.map(v => `<div class="finding-card green"><div class="finding-title">${escapeHtml(v)}</div></div>`).join('')}
+      </div>
+    `;
+  }
+  
+  // Unable to verify section
+  if (parsed.unableToVerify.length > 0) {
+    container.innerHTML += `
+      <div class="findings-section">
+        <div class="findings-section-title">📋 Unable to Verify — Missing Source</div>
+        ${parsed.unableToVerify.map(v => `<div class="finding-card blue"><div class="finding-title">${escapeHtml(v)}</div></div>`).join('')}
+      </div>
+    `;
+  }
+  
+  // Info only section
+  if (parsed.infoOnly.length > 0) {
+    container.innerHTML += `
+      <div class="findings-section">
+        <div class="findings-section-title">ℹ️ Information Only</div>
+        ${parsed.infoOnly.map(v => `<div class="finding-card"><div class="finding-title">${escapeHtml(v)}</div></div>`).join('')}
+      </div>
+    `;
+  }
+  
+  // Recommended actions
+  if (parsed.actions.length > 0) {
+    container.innerHTML += `
+      <div class="findings-section">
+        <div class="findings-section-title">📝 Recommended Staff Actions</div>
+        <div class="finding-card">
+          <ol style="margin:0;padding-left:20px;color:var(--gray-700);">
+            ${parsed.actions.map(a => `<li style="margin-bottom:6px;">${escapeHtml(a)}</li>`).join('')}
+          </ol>
+        </div>
+      </div>
+    `;
+  }
+  
+  document.getElementById('results').classList.add('active');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
 
-  results.classList.add('active');
-  results.scrollIntoView({ behavior: 'smooth' });
+function renderFinding(finding, severity, badge) {
+  return `
+    <div class="finding-card ${severity}">
+      <div class="finding-header">
+        <span class="finding-badge">${badge}</span>
+        <span class="finding-title">${escapeHtml(finding.title)}</span>
+      </div>
+      ${finding.detail ? `<div class="finding-detail">${escapeHtml(finding.detail)}</div>` : ''}
+      ${finding.action ? `<div class="finding-action">${escapeHtml(finding.action)}</div>` : ''}
+    </div>
+  `;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function resetForm() {
