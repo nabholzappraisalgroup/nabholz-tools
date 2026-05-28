@@ -209,7 +209,7 @@ Be concise and direct. Do not invent missing data. If text is unclear, say so. S
         try {
           const parsed = JSON.parse(data);
           if (res.statusCode !== 200) {
-            resolve({ statusCode: res.statusCode, body: JSON.stringify({ error: parsed.error ? parsed.error.message : data }) });
+            resolve({ statusCode: res.statusCode, body: JSON.stringify({ error: 'API error ' + res.statusCode + ': ' + (parsed.error ? JSON.stringify(parsed.error) : data.substring(0, 300)) }) });
             return;
           }
           const result = parsed.content[0].text;
@@ -225,7 +225,7 @@ Be concise and direct. Do not invent missing data. If text is unclear, say so. S
     });
 
     req.on('error', (e) => {
-      resolve({ statusCode: 500, body: JSON.stringify({ error: 'HTTPS request failed: ' + e.message }) });
+      resolve({ statusCode: 500, body: JSON.stringify({ error: 'HTTPS request failed: ' + e.message + ' | Key present: ' + !!ANTHROPIC_API_KEY + ' | Key prefix: ' + (ANTHROPIC_API_KEY ? ANTHROPIC_API_KEY.substring(0,10) : 'none') }) });
     });
 
     req.setTimeout(60000, () => {
