@@ -1,25 +1,38 @@
-const https = require('https');
-
 exports.handler = async function(event, context) {
+  // Only allow POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
+  // Check API key
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured. Please set ANTHROPIC_API_KEY in Netlify environment variables.' }) };
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'ANTHROPIC_API_KEY not set in Netlify environment variables.' })
+    };
   }
 
+  // Parse body
   let body;
   try {
     body = JSON.parse(event.body);
   } catch (e) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body' }) };
+    return {
+      statusCode: 400,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Invalid JSON body.' })
+    };
   }
 
   const { documents } = body;
-  if (!documents || !Array.isArray(documents) || documents.length === 0) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'No documents provided' }) };
+  if (!documents || documents.length === 0) {
+    return {
+      statusCode: 400,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'No documents provided.' })
+    };
   }
 
   const SYSTEM_PROMPT = `You are the Appraisal Write-Up Consistency Checker for Nabholz Appraisal Group.
@@ -50,96 +63,74 @@ Check these categories:
 - FHA case number (if applicable), VA case number (if applicable)
 - Due date if shown
 Do not check assigned appraiser or inspector name.
-Do not rely on the report front page as the loan-type source unless uploaded documents clearly show FHA, VA, RD, or another specific assignment type.
 
 3. Contract / Transaction Data (purchases only)
-- Contract price, Contract date
-- Buyer names, Seller names
-- Seller concessions, Personal property
-- Repairs or completion items
+- Contract price, Contract date, Buyer names, Seller names
+- Seller concessions, Personal property, Repairs/completion items
 - Site size being conveyed, Included/excluded parcels
-
-Contract Execution Check:
-Verify the sales contract is fully executed — signed by both buyer and seller. If not signed by both → Red Flag. If only a counter offer or addendum was uploaded without a fully executed main contract → Red Flag.
-
-Non-Arms-Length Detection:
-If buyer and seller share the same last name, or either name appears on both sides → Yellow Flag: "Buyer and seller may be related — confirm arms-length transaction or note as non-arms-length in the report."
+- Contract execution: both buyer and seller must have signed. Unsigned = Red Flag.
+- Non-arms-length: buyer and seller share same last name = Yellow Flag.
 
 4. Site / Parcel / Acreage
-Compare reported site size, tax acreage, MLS acreage, contract acreage, survey/deed acreage, partial conveyance language, multiple parcel indications. Acreage, parcel count, legal description, partial conveyance, and multi-parcel issues are HIGH PRIORITY. Do not assume tax acreage is correct or incorrect.
+Compare reported site size, tax acreage, MLS acreage, contract acreage, survey/deed acreage, partial conveyance language, multiple parcel indications. HIGH PRIORITY. Do not assume tax acreage is correct.
 
 5. Basic Property Data
 - Year built
-- HOA/PUD indication — if MLS shows an HOA or association fee but the report does not have the PUD box checked → Red Flag
+- HOA/PUD: if MLS shows HOA fee but PUD box not checked on report = Red Flag.
 
-6. Basic Utility Consistency
-- Public water vs. private well
-- Public sewer vs. septic
-- Other obvious utility conflicts
-Clear conflicts = Red Flag. If unclear = Yellow Flag or Unable to Verify.
+6. Utility Consistency
+- Public water vs. well, public sewer vs. septic.
+- Clear conflict = Red Flag. Unclear = Yellow Flag.
 
-7. Basic Agency Setup (FHA/VA/RD only)
-- FHA case number match
-- VA case number match
-- FHA new construction builder certification present when FHA new construction indicated
+7. Agency Setup (FHA/VA/RD only)
+- FHA/VA case number match, FHA new construction builder cert when applicable.
 
 8. Seller Name vs. Tax Card Owner
-- Names close (typo, middle name, married name) → Yellow Flag
-- Names completely different or one is a business → Red Flag with action: "Check Arkansas Secretary of State at ark.org/corp-search. If signer is registered agent, save as Proof of Ownership PDF. If no relationship found, request Proof of Ownership from client."
+- Close variation = Yellow Flag. Completely different = Red Flag. Action: check ark.org/corp-search.
 
 9. Rent Schedule / Investment Property
-If any doc mentions "1007 form," "investment property," "rental income," or "rent schedule" → Yellow Flag: "Docs indicate possible investment property or rent schedule requirement — confirm with Amy and request current rental rates from client early in the process."
+- Any mention of 1007 form, investment property, rental income = Yellow Flag.
 
 10. Due Date Reasonableness
-If order type can be determined:
-- Lender orders: due date in Tracker should be 1 business day BEFORE the date listed on order/engagement letter
-- VA and GP orders: due date should be ~7 business days after the appraisal request date
-If due date appears to match lender's listed date exactly (not 1 day prior) → Yellow Flag.
-If VA/GP due date not ~7 business days from request date → Yellow Flag.
+- Lender: Tracker due date = 1 business day before lender's listed due date.
+- VA/GP: ~7 business days after request date. Mismatch = Yellow Flag.
 
 11. Report Fee Reasonableness
-Standard Nabholz fee schedule:
-- Lender/conventional: $600
-- VA single-family residential: $700
-- VA manufactured home: $750
-- VA 2-4 unit multi-family: $800
-- GP (private/non-lender): $550
-If fee is outside expected range without explanation → Yellow Flag.
+- Lender/conventional $600, VA SFR $700, VA manufactured $750, VA 2-4 unit $800, GP $550.
+- Fee outside range = Yellow Flag.
 
-12. GP Orders — Intended Use and Intended User
-For GP (private/non-lender) assignments: if intended use OR intended user is missing → Red Flag: "GP orders require confirmed intended use and intended user before acceptance — escalate to Amy."
+12. GP Orders
+- Missing intended use OR intended user = Red Flag, escalate to Amy.
 
-Feature / Personal Property Handling:
-Do not flag every MLS mention of a shed, outbuilding, appliance, or minor feature as Yellow unless there is a clear conflict with the contract. If MLS mentions a minor feature with no conflict → Information Only.
+Handling rules:
+- Minor features (shed, appliance) with no contract conflict = Information Only.
+- Don't list deed/title as missing unless there's a conflict that can't be resolved.
 
-Deed / Title Handling:
-Do not list deed or title commitment as missing on every file. Only list when there is a legal description, parcel, ownership, acreage, or conveyance conflict that cannot be resolved from uploaded documents.
+SEVERITY LEVELS:
+- Red Flag: could make report materially wrong or stop the file
+- Yellow Flag: may be explainable but needs Anna's review
+- Information Only: useful notes, not problems
+- OK: source uploaded, no inconsistency found
+- Unable to Verify: source not available
 
-Severity levels:
-- Red Flag: issue could make the report materially wrong or should stop the file
-- Yellow Flag: may be explainable but Anna needs to review
-- Information Only: useful notes that are not problems
-- OK: source uploaded and no meaningful inconsistency found
-- Unable to Verify: source needed is missing
+OUTPUT FORMAT - always use this exact structure:
 
-Output format — ALWAYS use this exact structure:
-
----
 DOCUMENTS UPLOADED:
-[List each document type with ✅ if uploaded or ⬜ if not uploaded]
-- ✅/⬜ Order form / engagement letter
-- ✅/⬜ Sales contract and addenda
-- ✅/⬜ MLS subject sheet
-- ✅/⬜ Tax card / assessor record
-- ✅/⬜ Parcel map / plat / legal support
-- ✅/⬜ Seller disclosure
+[List each doc type with checkmark if uploaded or circle if not]
+- ✅/⚪ Order form / engagement letter
+- ✅/⚪ Report front page / write-up
+- ✅/⚪ Sales contract and addenda
+- ✅/⚪ MLS subject sheet
+- ✅/⚪ Tax card / assessor record
+- ✅/⚪ Parcel map / plat / legal support
+- ✅/⚪ Seller disclosure
 
 ---
 QC RESULT: PASS / REVIEW REQUIRED / STOP - OFFICE REVIEW REQUIRED
 
 Property: [Address]
 
-Summary: [2-3 sentence summary]
+Summary: [2-3 sentences]
 
 RED FLAGS:
 1. [Issue]
@@ -159,81 +150,61 @@ INFORMATION ONLY:
 ℹ️ [note]
 
 VERIFIED / OK:
-✅ [important verified items only — not every field]
+✅ [important verified items only]
 
 MISSING / UNABLE TO VERIFY:
-⚪ [item] — [impact of not having it]
+⚪ [item] — [impact]
 
 RECOMMENDED STAFF ACTIONS:
 1. [action]
 
 SUGGESTED REPORT COMMENT:
-[Only include if a Red or Yellow Flag likely requires a report explanation. Omit if not needed.]
+[Only if a flag likely requires a report explanation. Omit if not needed.]
 
 ---
-Overall result labels:
-- QC RESULT: PASS — no red or yellow flags
-- QC RESULT: REVIEW REQUIRED — yellow flags only
-- QC RESULT: STOP - OFFICE REVIEW REQUIRED — red flags found
-
-Behavior rules:
-Be concise and direct. Do not invent missing data. If text is unclear, say so. Show conflicting source values. Do not clear red flags yourself. Prioritize issues that could cause a correction, revision request, client issue, or wrong front-end setup. Keep output practical for Anna.`;
+Result labels: PASS = no flags | REVIEW REQUIRED = yellow flags only | STOP - OFFICE REVIEW REQUIRED = any red flag.
+Be concise. Do not invent data. Show source conflicts. Do not clear red flags. Keep output practical for Anna.`;
 
   const docLines = documents.map(d => `=== ${d.label.toUpperCase()} ===\n${d.text}`).join('\n\n');
   const userMessage = `Please run the front-end consistency check on the following appraisal write-up packet.\n\n${docLines}`;
 
-  const requestBody = JSON.stringify({
-    model: 'claude-3-haiku-20240307',
-    max_tokens: 4096,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userMessage }]
-  });
-
-  return new Promise((resolve) => {
-    const options = {
-      hostname: 'api.anthropic.com',
-      path: '/v1/messages',
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Length': Buffer.byteLength(requestBody)
-      }
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307',
+        max_tokens: 4096,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        statusCode: response.status,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: `Anthropic API error ${response.status}: ${JSON.stringify(data)}` })
+      };
+    }
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ result: data.content[0].text })
     };
 
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        try {
-          const parsed = JSON.parse(data);
-          if (res.statusCode !== 200) {
-            resolve({ statusCode: res.statusCode, body: JSON.stringify({ error: 'API error ' + res.statusCode + ': ' + (parsed.error ? JSON.stringify(parsed.error) : data.substring(0, 300)) }) });
-            return;
-          }
-          const result = parsed.content[0].text;
-          resolve({
-            statusCode: 200,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ result })
-          });
-        } catch (e) {
-          resolve({ statusCode: 500, body: JSON.stringify({ error: 'Failed to parse API response: ' + e.message }) });
-        }
-      });
-    });
-
-    req.on('error', (e) => {
-      resolve({ statusCode: 500, body: JSON.stringify({ error: 'HTTPS request failed: ' + e.message + ' | Key present: ' + !!ANTHROPIC_API_KEY + ' | Key prefix: ' + (ANTHROPIC_API_KEY ? ANTHROPIC_API_KEY.substring(0,10) : 'none') }) });
-    });
-
-    req.setTimeout(60000, () => {
-      req.destroy();
-      resolve({ statusCode: 504, body: JSON.stringify({ error: 'Request timed out — please try again.' }) });
-    });
-
-    req.write(requestBody);
-    req.end();
-  });
+  } catch (err) {
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: `Function error: ${err.message}` })
+    };
+  }
 };

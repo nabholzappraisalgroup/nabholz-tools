@@ -3,7 +3,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  timeout = 26
+  included_files = []
 
 [functions."consistency-check"]
   timeout = 26
