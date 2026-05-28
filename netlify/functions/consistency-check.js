@@ -177,7 +177,7 @@ Be concise. Do not invent data. Show source conflicts. Do not clear red flags. K
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-3-haiku-20240307',
         max_tokens: 4096,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userMessage }]
