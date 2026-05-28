@@ -3,9 +3,10 @@
 
 [functions]
   node_bundler = "esbuild"
+  timeout = 26
 
 [functions."consistency-check"]
-  timeout = 60
+  timeout = 26
 
 [[redirects]]
   from = "/"

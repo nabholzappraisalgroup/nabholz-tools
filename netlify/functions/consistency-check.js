@@ -183,7 +183,7 @@ Be concise and direct. Do not invent missing data. If text is unclear, say so. S
   const userMessage = `Please run the front-end consistency check on the following appraisal write-up packet.\n\n${docLines}`;
 
   const requestBody = JSON.stringify({
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-3-haiku-20240307',
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userMessage }]
