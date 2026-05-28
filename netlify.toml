@@ -1,6 +1,17 @@
 [build]
   functions = "netlify/functions"
 
+[functions]
+  node_bundler = "esbuild"
+
+[functions."consistency-check"]
+  timeout = 60
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
 [[redirects]]
   from = "/appraisal-intake"
   to = "/appraisal-intake/index.html"
