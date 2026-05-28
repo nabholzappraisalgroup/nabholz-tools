@@ -499,10 +499,22 @@ async function runCheck() {
   const documents = Object.values(docs);
 
   try {
+    const payload = JSON.stringify({ documents });
+    const payloadSizeMB = (new Blob([payload]).size / 1024 / 1024).toFixed(2);
+
+    // Warn if payload is very large
+    if (new Blob([payload]).size > 5 * 1024 * 1024) {
+      loading.classList.remove('active');
+      errorBox.textContent = `Documents too large (${payloadSizeMB}MB). Please upload fewer or smaller files.`;
+      errorBox.classList.add('active');
+      document.getElementById('btnRun').disabled = false;
+      return;
+    }
+
     const response = await fetch('/.netlify/functions/consistency-check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ documents })
+      body: payload
     });
 
     const data = await response.json();
@@ -518,7 +530,7 @@ async function runCheck() {
     showResults(data.result);
   } catch (err) {
     loading.classList.remove('active');
-    errorBox.textContent = 'Network error — please check your connection and try again.';
+    errorBox.textContent = 'Error: ' + err.message;
     errorBox.classList.add('active');
     document.getElementById('btnRun').disabled = false;
   }
