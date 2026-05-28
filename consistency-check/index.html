@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nabholz Appraisal — Consistency Checker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {
+  --navy: #1a2e4a;
+  --navy-light: #243d62;
+  --navy-dark: #111e31;
+  --gold: #c9a84c;
+  --gold-light: #dfc07a;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fca5a5;
+  --yellow-bg: #fffbeb;
+  --yellow-border: #fde68a;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --green-border: #86efac;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:#eef1f5;
+  color:var(--gray-900);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+.app-header{
+  background:var(--navy);
+  color:var(--white);
+  padding:22px 24px 18px;
+  text-align:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
+}
+.app-header h1{
+  font-size:1.55rem;
+  font-weight:800;
+  letter-spacing:.1em;
+  color:var(--gold);
+}
+.app-header p{
+  font-size:.88rem;
+  color:rgba(255,255,255,.7);
+  margin-top:4px;
+}
+.nav-link{
+  display:inline-block;
+  margin-top:10px;
+  color:rgba(255,255,255,.6);
+  font-size:.8rem;
+  text-decoration:none;
+}
+.nav-link:hover{color:var(--gold);}
+
+/* MAIN */
+.main{
+  flex:1;
+  max-width:860px;
+  margin:32px auto;
+  padding:0 16px 60px;
+  width:100%;
+}
+
+.section-title{
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:2px solid var(--gold);
+}
+
+.intro-card{
+  background:var(--white);
+  border-radius:10px;
+  padding:20px 24px;
+  margin-bottom:28px;
+  border-left:4px solid var(--gold);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+.intro-card p{
+  font-size:.9rem;
+  color:var(--gray-600);
+  line-height:1.6;
+}
+.intro-card strong{color:var(--navy);}
+
+/* UPLOAD GRID */
+.upload-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:28px;
+}
+@media(max-width:580px){.upload-grid{grid-template-columns:1fr;}}
+
+.upload-zone{
+  background:var(--white);
+  border:2px dashed var(--gray-300);
+  border-radius:10px;
+  padding:18px 16px;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+}
+.upload-zone:hover{border-color:var(--gold);background:#fffdf5;}
+.upload-zone.has-file{border-color:var(--green);background:var(--green-bg);border-style:solid;}
+.upload-zone.dragging{border-color:var(--gold);background:#fffdf5;transform:scale(1.01);}
+
+.upload-zone input[type="file"]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+}
+.zone-icon{font-size:1.6rem;margin-bottom:6px;}
+.zone-label{font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.zone-sublabel{font-size:.75rem;color:var(--gray-500);}
+.zone-filename{
+  font-size:.75rem;color:var(--green);font-weight:600;margin-top:6px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.zone-remove{
+  position:absolute;top:8px;right:10px;
+  background:none;border:none;color:var(--gray-400);cursor:pointer;
+  font-size:1rem;line-height:1;padding:2px;
+}
+.zone-remove:hover{color:var(--red);}
+
+/* EXTRACTING STATE */
+.zone-extracting{font-size:.75rem;color:var(--gold);font-weight:600;margin-top:6px;}
+
+/* RUN BUTTON */
+.run-wrap{text-align:center;margin-bottom:32px;}
+.btn-run{
+  background:var(--gold);
+  color:var(--navy-dark);
+  border:none;
+  padding:16px 48px;
+  font-size:1rem;
+  font-weight:800;
+  border-radius:8px;
+  cursor:pointer;
+  letter-spacing:.05em;
+  transition:all .2s;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.btn-run:hover:not(:disabled){background:var(--gold-light);transform:translateY(-1px);}
+.btn-run:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.doc-count{font-size:.82rem;color:var(--gray-500);margin-top:8px;}
+
+/* LOADING */
+.loading{
+  display:none;
+  text-align:center;
+  padding:40px 20px;
+}
+.loading.active{display:block;}
+.spinner{
+  width:48px;height:48px;
+  border:4px solid var(--gray-200);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{color:var(--gray-600);font-size:.9rem;}
+
+/* RESULTS */
+.results{display:none;}
+.results.active{display:block;}
+
+.result-header{
+  border-radius:10px;
+  padding:20px 24px;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.result-header.pass{background:var(--green-bg);border:1px solid var(--green-border);}
+.result-header.review{background:var(--yellow-bg);border:1px solid var(--yellow-border);}
+.result-header.stop{background:var(--red-bg);border:1px solid var(--red-border);}
+.result-icon{font-size:2rem;}
+.result-title{font-size:1.15rem;font-weight:800;}
+.result-header.pass .result-title{color:#166534;}
+.result-header.review .result-title{color:#92400e;}
+.result-header.stop .result-title{color:var(--red);}
+.result-subtitle{font-size:.85rem;margin-top:3px;opacity:.8;}
+
+.result-body{
+  background:var(--white);
+  border-radius:10px;
+  padding:28px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+  line-height:1.7;
+  white-space:pre-wrap;
+  font-size:.9rem;
+  font-family:'Courier New',monospace;
+}
+
+/* ACTION BUTTONS */
+.action-row{
+  display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;
+}
+.btn-secondary{
+  background:var(--white);
+  color:var(--navy);
+  border:2px solid var(--navy);
+  padding:10px 24px;
+  font-size:.88rem;
+  font-weight:700;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-secondary:hover{background:var(--navy);color:var(--white);}
+.btn-new{
+  background:var(--navy);
+  color:var(--white);
+  border:none;
+  padding:10px 24px;
+  font-size:.88rem;
+  font-weight:700;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-new:hover{background:var(--navy-light);}
+
+/* ERROR */
+.error-box{
+  background:var(--red-bg);
+  border:1px solid var(--red-border);
+  border-radius:10px;
+  padding:20px;
+  color:var(--red);
+  font-size:.9rem;
+  margin-bottom:20px;
+  display:none;
+}
+.error-box.active{display:block;}
+
+/* FOOTER */
+.footer{
+  background:var(--navy-dark);
+  color:rgba(255,255,255,.5);
+  text-align:center;
+  padding:16px;
+  font-size:.78rem;
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>NABHOLZ APPRAISAL GROUP</h1>
+  <p>Write-Up Consistency Checker</p>
+  <a href="/appraisal-intake/" class="nav-link">← Back to Private Order Intake</a>
+</header>
+
+<main class="main">
+
+  <div class="intro-card">
+    <p>Upload the documents from the appraisal work file below. You don't need all of them — upload whatever you have and the checker will note what couldn't be verified. Click <strong>Run Consistency Check</strong> when ready.</p>
+  </div>
+
+  <p class="section-title">Upload Documents</p>
+
+  <div class="upload-grid" id="uploadGrid">
+
+    <div class="upload-zone" id="zone-order" ondragover="handleDragOver(event,'zone-order')" ondragleave="handleDragLeave('zone-order')" ondrop="handleDrop(event,'order')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'order')" />
+      <div class="zone-icon">📋</div>
+      <div class="zone-label">Order Form / Engagement Letter</div>
+      <div class="zone-sublabel">Order details, 1805, engagement letter</div>
+      <div class="zone-filename" id="name-order"></div>
+      <button class="zone-remove" id="remove-order" onclick="removeFile('order')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-report" ondragover="handleDragOver(event,'zone-report')" ondragleave="handleDragLeave('zone-report')" ondrop="handleDrop(event,'report')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'report')" />
+      <div class="zone-icon">📄</div>
+      <div class="zone-label">Report Front Page / Write-Up</div>
+      <div class="zone-sublabel">TOTAL report page 1, assignment page</div>
+      <div class="zone-filename" id="name-report"></div>
+      <button class="zone-remove" id="remove-report" onclick="removeFile('report')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-contract" ondragover="handleDragOver(event,'zone-contract')" ondragleave="handleDragLeave('zone-contract')" ondrop="handleDrop(event,'contract')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'contract')" />
+      <div class="zone-icon">📝</div>
+      <div class="zone-label">Sales Contract & Addenda</div>
+      <div class="zone-sublabel">Purchase contracts, counter offers</div>
+      <div class="zone-filename" id="name-contract"></div>
+      <button class="zone-remove" id="remove-contract" onclick="removeFile('contract')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-mls" ondragover="handleDragOver(event,'zone-mls')" ondragleave="handleDragLeave('zone-mls')" ondrop="handleDrop(event,'mls')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'mls')" />
+      <div class="zone-icon">🏠</div>
+      <div class="zone-label">MLS Subject Sheet</div>
+      <div class="zone-sublabel">Paragon 5, Zillow listing</div>
+      <div class="zone-filename" id="name-mls"></div>
+      <button class="zone-remove" id="remove-mls" onclick="removeFile('mls')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-taxcard" ondragover="handleDragOver(event,'zone-taxcard')" ondragleave="handleDragLeave('zone-taxcard')" ondrop="handleDrop(event,'taxcard')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'taxcard')" />
+      <div class="zone-icon">🏛️</div>
+      <div class="zone-label">Tax Card / Assessor Record</div>
+      <div class="zone-sublabel">ARCountyData, ActDataScout</div>
+      <div class="zone-filename" id="name-taxcard"></div>
+      <button class="zone-remove" id="remove-taxcard" onclick="removeFile('taxcard')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-parcel" ondragover="handleDragOver(event,'zone-parcel')" ondragleave="handleDragLeave('zone-parcel')" ondrop="handleDrop(event,'parcel')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'parcel')" />
+      <div class="zone-icon">🗺️</div>
+      <div class="zone-label">Parcel Map / Plat / Survey</div>
+      <div class="zone-sublabel">Parcel map, plat, legal description, deed</div>
+      <div class="zone-filename" id="name-parcel"></div>
+      <button class="zone-remove" id="remove-parcel" onclick="removeFile('parcel')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-disclosure" ondragover="handleDragOver(event,'zone-disclosure')" ondragleave="handleDragLeave('zone-disclosure')" ondrop="handleDrop(event,'disclosure')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'disclosure')" />
+      <div class="zone-icon">📋</div>
+      <div class="zone-label">Seller Disclosure</div>
+      <div class="zone-sublabel">Property disclosure form</div>
+      <div class="zone-filename" id="name-disclosure"></div>
+      <button class="zone-remove" id="remove-disclosure" onclick="removeFile('disclosure')" style="display:none">✕</button>
+    </div>
+
+    <div class="upload-zone" id="zone-other" ondragover="handleDragOver(event,'zone-other')" ondragleave="handleDragLeave('zone-other')" ondrop="handleDrop(event,'other')">
+      <input type="file" accept=".pdf" onchange="handleFile(this,'other')" />
+      <div class="zone-icon">📎</div>
+      <div class="zone-label">Other Document</div>
+      <div class="zone-sublabel">Any additional supporting document</div>
+      <div class="zone-filename" id="name-other"></div>
+      <button class="zone-remove" id="remove-other" onclick="removeFile('other')" style="display:none">✕</button>
+    </div>
+
+  </div>
+
+  <div class="run-wrap">
+    <button class="btn-run" id="btnRun" onclick="runCheck()" disabled>
+      Run Consistency Check
+    </button>
+    <div class="doc-count" id="docCount">Upload at least one document to begin</div>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Analyzing documents — this may take 30–60 seconds…</p>
+  </div>
+
+  <div class="results" id="results">
+    <div class="result-header" id="resultHeader">
+      <div class="result-icon" id="resultIcon"></div>
+      <div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-subtitle" id="resultSubtitle"></div>
+      </div>
+    </div>
+    <div class="result-body" id="resultBody"></div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="printResult()">🖨️ Print / Save PDF</button>
+      <button class="btn-new" onclick="resetForm()">Run Another Check</button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  Nabholz Appraisal Group · Internal Staff Tool · Not for client distribution
+</footer>
+
+<script>
+// PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const DOC_LABELS = {
+  order: 'Order Form / Engagement Letter',
+  report: 'Report Front Page / Write-Up',
+  contract: 'Sales Contract & Addenda',
+  mls: 'MLS Subject Sheet',
+  taxcard: 'Tax Card / Assessor Record',
+  parcel: 'Parcel Map / Plat / Survey',
+  disclosure: 'Seller Disclosure',
+  other: 'Other Document'
+};
+
+let docs = {};
+
+async function extractPdfText(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let text = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map(item => item.str).join(' ') + '\n';
+  }
+  return text.trim();
+}
+
+async function handleFile(input, key) {
+  const file = input.files[0];
+  if (!file) return;
+  await processFile(file, key);
+}
+
+async function processFile(file, key) {
+  const zone = document.getElementById(`zone-${key}`);
+  const nameEl = document.getElementById(`name-${key}`);
+  const removeBtn = document.getElementById(`remove-${key}`);
+
+  nameEl.textContent = '⏳ Extracting text…';
+  nameEl.className = 'zone-extracting';
+
+  try {
+    const text = await extractPdfText(file);
+    docs[key] = { label: DOC_LABELS[key], text: text || `[No text extracted from ${file.name}]`, filename: file.name };
+    zone.classList.add('has-file');
+    nameEl.textContent = '✓ ' + file.name;
+    nameEl.className = 'zone-filename';
+    removeBtn.style.display = 'block';
+  } catch (err) {
+    nameEl.textContent = '⚠️ Could not read PDF';
+    nameEl.className = 'zone-extracting';
+  }
+  updateRunButton();
+}
+
+function removeFile(key) {
+  delete docs[key];
+  const zone = document.getElementById(`zone-${key}`);
+  const nameEl = document.getElementById(`name-${key}`);
+  const removeBtn = document.getElementById(`remove-${key}`);
+  const input = zone.querySelector('input[type="file"]');
+  zone.classList.remove('has-file');
+  nameEl.textContent = '';
+  nameEl.className = 'zone-filename';
+  removeBtn.style.display = 'none';
+  if (input) input.value = '';
+  updateRunButton();
+  event.stopPropagation();
+}
+
+function handleDragOver(event, zoneId) {
+  event.preventDefault();
+  document.getElementById(zoneId).classList.add('dragging');
+}
+function handleDragLeave(zoneId) {
+  document.getElementById(zoneId).classList.remove('dragging');
+}
+async function handleDrop(event, key) {
+  event.preventDefault();
+  const zoneId = `zone-${key}`;
+  document.getElementById(zoneId).classList.remove('dragging');
+  const file = event.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') {
+    await processFile(file, key);
+  }
+}
+
+function updateRunButton() {
+  const count = Object.keys(docs).length;
+  const btn = document.getElementById('btnRun');
+  const countEl = document.getElementById('docCount');
+  btn.disabled = count === 0;
+  countEl.textContent = count === 0
+    ? 'Upload at least one document to begin'
+    : `${count} document${count > 1 ? 's' : ''} ready — click Run Consistency Check`;
+}
+
+async function runCheck() {
+  const errorBox = document.getElementById('errorBox');
+  const loading = document.getElementById('loading');
+  const results = document.getElementById('results');
+
+  errorBox.classList.remove('active');
+  results.classList.remove('active');
+  loading.classList.add('active');
+  document.getElementById('btnRun').disabled = true;
+
+  const documents = Object.values(docs);
+
+  try {
+    const response = await fetch('/.netlify/functions/consistency-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ documents })
+    });
+
+    const data = await response.json();
+    loading.classList.remove('active');
+
+    if (!response.ok || data.error) {
+      errorBox.textContent = data.error || 'Something went wrong. Please try again.';
+      errorBox.classList.add('active');
+      document.getElementById('btnRun').disabled = false;
+      return;
+    }
+
+    showResults(data.result);
+  } catch (err) {
+    loading.classList.remove('active');
+    errorBox.textContent = 'Network error — please check your connection and try again.';
+    errorBox.classList.add('active');
+    document.getElementById('btnRun').disabled = false;
+  }
+}
+
+function showResults(text) {
+  const results = document.getElementById('results');
+  const header = document.getElementById('resultHeader');
+  const icon = document.getElementById('resultIcon');
+  const title = document.getElementById('resultTitle');
+  const subtitle = document.getElementById('resultSubtitle');
+  const body = document.getElementById('resultBody');
+
+  body.textContent = text;
+
+  // Detect result type
+  const upper = text.toUpperCase();
+  if (upper.includes('STOP - OFFICE REVIEW REQUIRED') || upper.includes('STOP—OFFICE') || upper.includes('STOP: OFFICE')) {
+    header.className = 'result-header stop';
+    icon.textContent = '🛑';
+    title.textContent = 'STOP — OFFICE REVIEW REQUIRED';
+    subtitle.textContent = 'Red flags found. Do not move this file forward until resolved.';
+  } else if (upper.includes('REVIEW REQUIRED')) {
+    header.className = 'result-header review';
+    icon.textContent = '⚠️';
+    title.textContent = 'REVIEW REQUIRED';
+    subtitle.textContent = 'Yellow flags found. Review and resolve before moving forward.';
+  } else {
+    header.className = 'result-header pass';
+    icon.textContent = '✅';
+    title.textContent = 'PASS';
+    subtitle.textContent = 'No flags found based on uploaded documents.';
+  }
+
+  results.classList.add('active');
+  results.scrollIntoView({ behavior: 'smooth' });
+}
+
+function printResult() {
+  window.print();
+}
+
+function resetForm() {
+  docs = {};
+  Object.keys(DOC_LABELS).forEach(key => {
+    const zone = document.getElementById(`zone-${key}`);
+    const nameEl = document.getElementById(`name-${key}`);
+    const removeBtn = document.getElementById(`remove-${key}`);
+    const input = zone ? zone.querySelector('input[type="file"]') : null;
+    if (zone) zone.classList.remove('has-file');
+    if (nameEl) { nameEl.textContent = ''; nameEl.className = 'zone-filename'; }
+    if (removeBtn) removeBtn.style.display = 'none';
+    if (input) input.value = '';
+  });
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('errorBox').classList.remove('active');
+  updateRunButton();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

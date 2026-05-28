@@ -1,3 +1,6 @@
+[build]
+  functions = "netlify/functions"
+
 [[redirects]]
   from = "/"
   to = "/appraisal-intake/index.html"
@@ -6,4 +9,9 @@
 [[redirects]]
   from = "/appraisal-intake"
   to = "/appraisal-intake/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/consistency-check"
+  to = "/consistency-check/index.html"
   status = 200
