@@ -127,7 +127,7 @@ Be concise. Do not invent data. Show source conflicts. Keep output practical for
 
   const requestBody = JSON.stringify({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 4096,
+    max_tokens: 2048,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userMessage }]
   });

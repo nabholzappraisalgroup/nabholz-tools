@@ -498,11 +498,11 @@ async function runCheck() {
 
   const documents = Object.values(docs);
 
-  // Truncate each doc to 3000 chars — key facts (addresses, names, parcels, prices) 
-  // are always on the first pages. This keeps total payload under AI processing limits.
+  // Truncate each doc to 1500 chars — just the key facts from page 1
+  // Addresses, names, parcels, prices are always at the top
   const truncatedDocs = documents.map(d => ({
     label: d.label,
-    text: d.text.length > 3000 ? d.text.substring(0, 3000) + '\n[...truncated]' : d.text
+    text: d.text.length > 1500 ? d.text.substring(0, 1500) + '\n[...]' : d.text
   }));
 
   const payload = JSON.stringify({ documents: truncatedDocs });
