@@ -498,26 +498,43 @@ async function runCheck() {
 
   const documents = Object.values(docs);
 
+  // Truncate each doc to 8000 chars to keep payload manageable
+  const truncatedDocs = documents.map(d => ({
+    label: d.label,
+    text: d.text.length > 8000 ? d.text.substring(0, 8000) + '\n[...truncated for length]' : d.text
+  }));
+
+  const payload = JSON.stringify({ documents: truncatedDocs });
+  const payloadSizeMB = (new Blob([payload]).size / 1024 / 1024).toFixed(2);
+
+  // Hard stop if still too large
+  if (new Blob([payload]).size > 4 * 1024 * 1024) {
+    loading.classList.remove('active');
+    errorBox.textContent = `Documents too large (${payloadSizeMB}MB) even after truncation. Please upload fewer files.`;
+    errorBox.classList.add('active');
+    document.getElementById('btnRun').disabled = false;
+    return;
+  }
+
   try {
-    const payload = JSON.stringify({ documents });
-    const payloadSizeMB = (new Blob([payload]).size / 1024 / 1024).toFixed(2);
-
-    // Warn if payload is very large
-    if (new Blob([payload]).size > 5 * 1024 * 1024) {
-      loading.classList.remove('active');
-      errorBox.textContent = `Documents too large (${payloadSizeMB}MB). Please upload fewer or smaller files.`;
-      errorBox.classList.add('active');
-      document.getElementById('btnRun').disabled = false;
-      return;
-    }
-
     const response = await fetch('/.netlify/functions/consistency-check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: payload
     });
 
-    const data = await response.json();
+    let data;
+    const responseText = await response.text();
+    try {
+      data = JSON.parse(responseText);
+    } catch(e) {
+      loading.classList.remove('active');
+      errorBox.textContent = 'Server returned unexpected response: ' + responseText.substring(0, 200);
+      errorBox.classList.add('active');
+      document.getElementById('btnRun').disabled = false;
+      return;
+    }
+
     loading.classList.remove('active');
 
     if (!response.ok || data.error) {
@@ -530,7 +547,7 @@ async function runCheck() {
     showResults(data.result);
   } catch (err) {
     loading.classList.remove('active');
-    errorBox.textContent = 'Error: ' + err.message;
+    errorBox.textContent = 'Network error: ' + err.message + '. Check your internet connection and try again.';
     errorBox.classList.add('active');
     document.getElementById('btnRun').disabled = false;
   }
