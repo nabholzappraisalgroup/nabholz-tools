@@ -13,7 +13,6 @@
   --gold: #c9a84c;
   --gold-light: #dfc07a;
   --white: #ffffff;
-  --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
   --gray-300: #d1d5db;
@@ -73,77 +72,125 @@ body{
 /* MAIN */
 .main{
   flex:1;
-  max-width:860px;
+  max-width:800px;
   margin:32px auto;
   padding:0 16px 60px;
   width:100%;
 }
 
 .section-title{
-  font-size:1.1rem;
+  font-size:1.05rem;
   font-weight:700;
   color:var(--navy);
-  margin-bottom:14px;
+  margin-bottom:12px;
   padding-bottom:8px;
   border-bottom:2px solid var(--gold);
 }
 
-.intro-card{
+/* RECOMMENDED DOCS CARD */
+.docs-card{
   background:var(--white);
   border-radius:10px;
   padding:20px 24px;
-  margin-bottom:28px;
-  border-left:4px solid var(--gold);
+  margin-bottom:24px;
   box-shadow:0 1px 4px rgba(0,0,0,.08);
 }
-.intro-card p{
-  font-size:.9rem;
+.docs-card p{
+  font-size:.88rem;
   color:var(--gray-600);
+  margin-bottom:14px;
   line-height:1.6;
 }
-.intro-card strong{color:var(--navy);}
-
-/* UPLOAD GRID */
-.upload-grid{
+.docs-list{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-bottom:28px;
+  gap:8px 20px;
+  list-style:none;
 }
-@media(max-width:580px){.upload-grid{grid-template-columns:1fr;}}
+@media(max-width:520px){.docs-list{grid-template-columns:1fr;}}
+.docs-list li{
+  font-size:.84rem;
+  color:var(--gray-700);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.docs-list li .doc-icon{font-size:1rem;}
+.docs-list li .doc-note{
+  font-size:.75rem;
+  color:var(--gray-400);
+}
 
-.upload-zone{
+/* DROP ZONE */
+.drop-zone{
   background:var(--white);
-  border:2px dashed var(--gray-300);
-  border-radius:10px;
-  padding:18px 16px;
+  border:3px dashed var(--gray-300);
+  border-radius:12px;
+  padding:40px 24px;
+  text-align:center;
   cursor:pointer;
   transition:all .2s;
   position:relative;
+  margin-bottom:20px;
 }
-.upload-zone:hover{border-color:var(--gold);background:#fffdf5;}
-.upload-zone.has-file{border-color:var(--green);background:var(--green-bg);border-style:solid;}
-.upload-zone.dragging{border-color:var(--gold);background:#fffdf5;transform:scale(1.01);}
-
-.upload-zone input[type="file"]{
+.drop-zone:hover{border-color:var(--gold);background:#fffdf5;}
+.drop-zone.dragging{border-color:var(--gold);background:#fffdf5;transform:scale(1.005);}
+.drop-zone.has-files{border-color:var(--navy);border-style:solid;}
+.drop-zone input[type="file"]{
   position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
 }
-.zone-icon{font-size:1.6rem;margin-bottom:6px;}
-.zone-label{font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:3px;}
-.zone-sublabel{font-size:.75rem;color:var(--gray-500);}
-.zone-filename{
-  font-size:.75rem;color:var(--green);font-weight:600;margin-top:6px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.drop-icon{font-size:2.8rem;margin-bottom:10px;}
+.drop-title{
+  font-size:1.05rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:6px;
 }
-.zone-remove{
-  position:absolute;top:8px;right:10px;
-  background:none;border:none;color:var(--gray-400);cursor:pointer;
-  font-size:1rem;line-height:1;padding:2px;
+.drop-sub{
+  font-size:.85rem;
+  color:var(--gray-500);
 }
-.zone-remove:hover{color:var(--red);}
+.drop-sub strong{color:var(--gold);}
 
-/* EXTRACTING STATE */
-.zone-extracting{font-size:.75rem;color:var(--gold);font-weight:600;margin-top:6px;}
+/* FILE LIST */
+.file-list{
+  list-style:none;
+  margin-bottom:24px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.file-item{
+  background:var(--white);
+  border:1px solid var(--green-border);
+  border-left:4px solid var(--green);
+  border-radius:8px;
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:.86rem;
+}
+.file-item.extracting{
+  border-color:var(--gold);
+  border-left-color:var(--gold);
+}
+.file-name{
+  flex:1;
+  font-weight:600;
+  color:var(--gray-700);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.file-status{font-size:.8rem;color:var(--gray-500);}
+.file-status.ok{color:var(--green);}
+.file-status.extracting{color:var(--gold);}
+.file-remove{
+  background:none;border:none;color:var(--gray-400);
+  cursor:pointer;font-size:1rem;padding:2px 4px;flex-shrink:0;
+}
+.file-remove:hover{color:var(--red);}
 
 /* RUN BUTTON */
 .run-wrap{text-align:center;margin-bottom:32px;}
@@ -151,8 +198,8 @@ body{
   background:var(--gold);
   color:var(--navy-dark);
   border:none;
-  padding:16px 48px;
-  font-size:1rem;
+  padding:16px 56px;
+  font-size:1.05rem;
   font-weight:800;
   border-radius:8px;
   cursor:pointer;
@@ -161,15 +208,11 @@ body{
   box-shadow:0 2px 8px rgba(0,0,0,.15);
 }
 .btn-run:hover:not(:disabled){background:var(--gold-light);transform:translateY(-1px);}
-.btn-run:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.doc-count{font-size:.82rem;color:var(--gray-500);margin-top:8px;}
+.btn-run:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.doc-count{font-size:.82rem;color:var(--gray-500);margin-top:10px;}
 
 /* LOADING */
-.loading{
-  display:none;
-  text-align:center;
-  padding:40px 20px;
-}
+.loading{display:none;text-align:center;padding:40px 20px;}
 .loading.active{display:block;}
 .spinner{
   width:48px;height:48px;
@@ -215,55 +258,36 @@ body{
   font-family:'Courier New',monospace;
 }
 
-/* ACTION BUTTONS */
 .action-row{
   display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;
 }
 .btn-secondary{
-  background:var(--white);
-  color:var(--navy);
-  border:2px solid var(--navy);
-  padding:10px 24px;
-  font-size:.88rem;
-  font-weight:700;
-  border-radius:8px;
-  cursor:pointer;
-  transition:all .2s;
+  background:var(--white);color:var(--navy);
+  border:2px solid var(--navy);padding:10px 24px;
+  font-size:.88rem;font-weight:700;border-radius:8px;
+  cursor:pointer;transition:all .2s;
 }
 .btn-secondary:hover{background:var(--navy);color:var(--white);}
 .btn-new{
-  background:var(--navy);
-  color:var(--white);
-  border:none;
-  padding:10px 24px;
-  font-size:.88rem;
-  font-weight:700;
-  border-radius:8px;
-  cursor:pointer;
-  transition:all .2s;
+  background:var(--navy);color:var(--white);
+  border:none;padding:10px 24px;
+  font-size:.88rem;font-weight:700;border-radius:8px;
+  cursor:pointer;transition:all .2s;
 }
 .btn-new:hover{background:var(--navy-light);}
 
 /* ERROR */
 .error-box{
-  background:var(--red-bg);
-  border:1px solid var(--red-border);
-  border-radius:10px;
-  padding:20px;
-  color:var(--red);
-  font-size:.9rem;
-  margin-bottom:20px;
-  display:none;
+  background:var(--red-bg);border:1px solid var(--red-border);
+  border-radius:10px;padding:20px;color:var(--red);
+  font-size:.9rem;margin-bottom:20px;display:none;
 }
 .error-box.active{display:block;}
 
 /* FOOTER */
 .footer{
-  background:var(--navy-dark);
-  color:rgba(255,255,255,.5);
-  text-align:center;
-  padding:16px;
-  font-size:.78rem;
+  background:var(--navy-dark);color:rgba(255,255,255,.5);
+  text-align:center;padding:16px;font-size:.78rem;
 }
 </style>
 </head>
@@ -277,87 +301,34 @@ body{
 
 <main class="main">
 
-  <div class="intro-card">
-    <p>Upload the documents from the appraisal work file below. You don't need all of them — upload whatever you have and the checker will note what couldn't be verified. Click <strong>Run Consistency Check</strong> when ready.</p>
+  <p class="section-title">Recommended Documents</p>
+
+  <div class="docs-card">
+    <p>Upload whatever documents you have from the work file — you don't need all of them. The checker will note anything it couldn't verify due to a missing document.</p>
+    <ul class="docs-list">
+      <li><span class="doc-icon">📋</span><span>Order form / engagement letter <span class="doc-note">(order details, 1805)</span></span></li>
+      <li><span class="doc-icon">📄</span><span>Report front page / write-up <span class="doc-note">(TOTAL assignment page)</span></span></li>
+      <li><span class="doc-icon">📝</span><span>Sales contract &amp; addenda <span class="doc-note">(purchase orders)</span></span></li>
+      <li><span class="doc-icon">🏠</span><span>MLS subject sheet <span class="doc-note">(Paragon 5, Zillow)</span></span></li>
+      <li><span class="doc-icon">🏛️</span><span>Tax card / assessor record <span class="doc-note">(ARCountyData)</span></span></li>
+      <li><span class="doc-icon">🗺️</span><span>Parcel map / plat / survey <span class="doc-note">(legal support)</span></span></li>
+      <li><span class="doc-icon">📋</span><span>Seller disclosure <span class="doc-note">(if available)</span></span></li>
+    </ul>
   </div>
 
   <p class="section-title">Upload Documents</p>
 
-  <div class="upload-grid" id="uploadGrid">
-
-    <div class="upload-zone" id="zone-order" ondragover="handleDragOver(event,'zone-order')" ondragleave="handleDragLeave('zone-order')" ondrop="handleDrop(event,'order')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'order')" />
-      <div class="zone-icon">📋</div>
-      <div class="zone-label">Order Form / Engagement Letter</div>
-      <div class="zone-sublabel">Order details, 1805, engagement letter</div>
-      <div class="zone-filename" id="name-order"></div>
-      <button class="zone-remove" id="remove-order" onclick="removeFile('order')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-report" ondragover="handleDragOver(event,'zone-report')" ondragleave="handleDragLeave('zone-report')" ondrop="handleDrop(event,'report')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'report')" />
-      <div class="zone-icon">📄</div>
-      <div class="zone-label">Report Front Page / Write-Up</div>
-      <div class="zone-sublabel">TOTAL report page 1, assignment page</div>
-      <div class="zone-filename" id="name-report"></div>
-      <button class="zone-remove" id="remove-report" onclick="removeFile('report')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-contract" ondragover="handleDragOver(event,'zone-contract')" ondragleave="handleDragLeave('zone-contract')" ondrop="handleDrop(event,'contract')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'contract')" />
-      <div class="zone-icon">📝</div>
-      <div class="zone-label">Sales Contract & Addenda</div>
-      <div class="zone-sublabel">Purchase contracts, counter offers</div>
-      <div class="zone-filename" id="name-contract"></div>
-      <button class="zone-remove" id="remove-contract" onclick="removeFile('contract')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-mls" ondragover="handleDragOver(event,'zone-mls')" ondragleave="handleDragLeave('zone-mls')" ondrop="handleDrop(event,'mls')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'mls')" />
-      <div class="zone-icon">🏠</div>
-      <div class="zone-label">MLS Subject Sheet</div>
-      <div class="zone-sublabel">Paragon 5, Zillow listing</div>
-      <div class="zone-filename" id="name-mls"></div>
-      <button class="zone-remove" id="remove-mls" onclick="removeFile('mls')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-taxcard" ondragover="handleDragOver(event,'zone-taxcard')" ondragleave="handleDragLeave('zone-taxcard')" ondrop="handleDrop(event,'taxcard')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'taxcard')" />
-      <div class="zone-icon">🏛️</div>
-      <div class="zone-label">Tax Card / Assessor Record</div>
-      <div class="zone-sublabel">ARCountyData, ActDataScout</div>
-      <div class="zone-filename" id="name-taxcard"></div>
-      <button class="zone-remove" id="remove-taxcard" onclick="removeFile('taxcard')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-parcel" ondragover="handleDragOver(event,'zone-parcel')" ondragleave="handleDragLeave('zone-parcel')" ondrop="handleDrop(event,'parcel')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'parcel')" />
-      <div class="zone-icon">🗺️</div>
-      <div class="zone-label">Parcel Map / Plat / Survey</div>
-      <div class="zone-sublabel">Parcel map, plat, legal description, deed</div>
-      <div class="zone-filename" id="name-parcel"></div>
-      <button class="zone-remove" id="remove-parcel" onclick="removeFile('parcel')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-disclosure" ondragover="handleDragOver(event,'zone-disclosure')" ondragleave="handleDragLeave('zone-disclosure')" ondrop="handleDrop(event,'disclosure')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'disclosure')" />
-      <div class="zone-icon">📋</div>
-      <div class="zone-label">Seller Disclosure</div>
-      <div class="zone-sublabel">Property disclosure form</div>
-      <div class="zone-filename" id="name-disclosure"></div>
-      <button class="zone-remove" id="remove-disclosure" onclick="removeFile('disclosure')" style="display:none">✕</button>
-    </div>
-
-    <div class="upload-zone" id="zone-other" ondragover="handleDragOver(event,'zone-other')" ondragleave="handleDragLeave('zone-other')" ondrop="handleDrop(event,'other')">
-      <input type="file" accept=".pdf" onchange="handleFile(this,'other')" />
-      <div class="zone-icon">📎</div>
-      <div class="zone-label">Other Document</div>
-      <div class="zone-sublabel">Any additional supporting document</div>
-      <div class="zone-filename" id="name-other"></div>
-      <button class="zone-remove" id="remove-other" onclick="removeFile('other')" style="display:none">✕</button>
-    </div>
-
+  <div class="drop-zone" id="dropZone"
+    ondragover="handleDragOver(event)"
+    ondragleave="handleDragLeave()"
+    ondrop="handleDrop(event)">
+    <input type="file" accept=".pdf" multiple onchange="handleFileInput(this)" />
+    <div class="drop-icon">📂</div>
+    <div class="drop-title">Drag &amp; drop your PDFs here</div>
+    <div class="drop-sub">or <strong>click to browse</strong> — select as many files as you have at once</div>
   </div>
+
+  <ul class="file-list" id="fileList"></ul>
 
   <div class="run-wrap">
     <button class="btn-run" id="btnRun" onclick="runCheck()" disabled>
@@ -383,7 +354,7 @@ body{
     </div>
     <div class="result-body" id="resultBody"></div>
     <div class="action-row">
-      <button class="btn-secondary" onclick="printResult()">🖨️ Print / Save PDF</button>
+      <button class="btn-secondary" onclick="window.print()">🖨️ Print / Save PDF</button>
       <button class="btn-new" onclick="resetForm()">Run Another Check</button>
     </div>
   </div>
@@ -395,21 +366,10 @@ body{
 </footer>
 
 <script>
-// PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const DOC_LABELS = {
-  order: 'Order Form / Engagement Letter',
-  report: 'Report Front Page / Write-Up',
-  contract: 'Sales Contract & Addenda',
-  mls: 'MLS Subject Sheet',
-  taxcard: 'Tax Card / Assessor Record',
-  parcel: 'Parcel Map / Plat / Survey',
-  disclosure: 'Seller Disclosure',
-  other: 'Other Document'
-};
-
-let docs = {};
+let docs = {}; // key = filename, value = { label, text }
+let extractionCount = 0;
 
 async function extractPdfText(file) {
   const arrayBuffer = await file.arrayBuffer();
@@ -423,74 +383,94 @@ async function extractPdfText(file) {
   return text.trim();
 }
 
-async function handleFile(input, key) {
-  const file = input.files[0];
-  if (!file) return;
-  await processFile(file, key);
+async function handleFileInput(input) {
+  const files = Array.from(input.files);
+  await processFiles(files);
 }
 
-async function processFile(file, key) {
-  const zone = document.getElementById(`zone-${key}`);
-  const nameEl = document.getElementById(`name-${key}`);
-  const removeBtn = document.getElementById(`remove-${key}`);
+async function handleDrop(event) {
+  event.preventDefault();
+  document.getElementById('dropZone').classList.remove('dragging');
+  const files = Array.from(event.dataTransfer.files).filter(f => f.type === 'application/pdf');
+  await processFiles(files);
+}
 
-  nameEl.textContent = '⏳ Extracting text…';
-  nameEl.className = 'zone-extracting';
+function handleDragOver(event) {
+  event.preventDefault();
+  document.getElementById('dropZone').classList.add('dragging');
+}
+function handleDragLeave() {
+  document.getElementById('dropZone').classList.remove('dragging');
+}
 
-  try {
-    const text = await extractPdfText(file);
-    docs[key] = { label: DOC_LABELS[key], text: text || `[No text extracted from ${file.name}]`, filename: file.name };
-    zone.classList.add('has-file');
-    nameEl.textContent = '✓ ' + file.name;
-    nameEl.className = 'zone-filename';
-    removeBtn.style.display = 'block';
-  } catch (err) {
-    nameEl.textContent = '⚠️ Could not read PDF';
-    nameEl.className = 'zone-extracting';
+async function processFiles(files) {
+  for (const file of files) {
+    if (docs[file.name]) continue; // skip duplicates
+    addFileRow(file.name, 'extracting');
+    extractionCount++;
+    updateRunButton();
+    try {
+      const text = await extractPdfText(file);
+      docs[file.name] = { label: file.name, text: text || `[No text extracted from ${file.name}]` };
+      setFileStatus(file.name, 'ok');
+    } catch (err) {
+      docs[file.name] = { label: file.name, text: `[Could not read ${file.name}]` };
+      setFileStatus(file.name, 'error');
+    }
+    extractionCount--;
+    updateRunButton();
+  }
+  if (Object.keys(docs).length > 0) {
+    document.getElementById('dropZone').classList.add('has-files');
+  }
+}
+
+function addFileRow(filename, status) {
+  const list = document.getElementById('fileList');
+  const li = document.createElement('li');
+  li.className = 'file-item' + (status === 'extracting' ? ' extracting' : '');
+  li.id = 'file-' + CSS.escape(filename);
+  li.innerHTML = `
+    <span style="font-size:1.1rem">📄</span>
+    <span class="file-name">${filename}</span>
+    <span class="file-status extracting" id="status-${CSS.escape(filename)}">⏳ Reading…</span>
+    <button class="file-remove" onclick="removeFile('${filename.replace(/'/g, "\\'")}')">✕</button>
+  `;
+  list.appendChild(li);
+}
+
+function setFileStatus(filename, status) {
+  const li = document.getElementById('file-' + CSS.escape(filename));
+  const statusEl = document.getElementById('status-' + CSS.escape(filename));
+  if (li) li.className = 'file-item';
+  if (statusEl) {
+    statusEl.className = 'file-status ok';
+    statusEl.textContent = '✓ Ready';
+  }
+}
+
+function removeFile(filename) {
+  delete docs[filename];
+  const li = document.getElementById('file-' + CSS.escape(filename));
+  if (li) li.remove();
+  if (Object.keys(docs).length === 0) {
+    document.getElementById('dropZone').classList.remove('has-files');
   }
   updateRunButton();
-}
-
-function removeFile(key) {
-  delete docs[key];
-  const zone = document.getElementById(`zone-${key}`);
-  const nameEl = document.getElementById(`name-${key}`);
-  const removeBtn = document.getElementById(`remove-${key}`);
-  const input = zone.querySelector('input[type="file"]');
-  zone.classList.remove('has-file');
-  nameEl.textContent = '';
-  nameEl.className = 'zone-filename';
-  removeBtn.style.display = 'none';
-  if (input) input.value = '';
-  updateRunButton();
-  event.stopPropagation();
-}
-
-function handleDragOver(event, zoneId) {
-  event.preventDefault();
-  document.getElementById(zoneId).classList.add('dragging');
-}
-function handleDragLeave(zoneId) {
-  document.getElementById(zoneId).classList.remove('dragging');
-}
-async function handleDrop(event, key) {
-  event.preventDefault();
-  const zoneId = `zone-${key}`;
-  document.getElementById(zoneId).classList.remove('dragging');
-  const file = event.dataTransfer.files[0];
-  if (file && file.type === 'application/pdf') {
-    await processFile(file, key);
-  }
 }
 
 function updateRunButton() {
   const count = Object.keys(docs).length;
   const btn = document.getElementById('btnRun');
   const countEl = document.getElementById('docCount');
-  btn.disabled = count === 0;
-  countEl.textContent = count === 0
-    ? 'Upload at least one document to begin'
-    : `${count} document${count > 1 ? 's' : ''} ready — click Run Consistency Check`;
+  btn.disabled = count === 0 || extractionCount > 0;
+  if (extractionCount > 0) {
+    countEl.textContent = 'Reading files…';
+  } else if (count === 0) {
+    countEl.textContent = 'Upload at least one document to begin';
+  } else {
+    countEl.textContent = `${count} document${count > 1 ? 's' : ''} ready — click Run Consistency Check`;
+  }
 }
 
 async function runCheck() {
@@ -541,7 +521,6 @@ function showResults(text) {
 
   body.textContent = text;
 
-  // Detect result type
   const upper = text.toUpperCase();
   if (upper.includes('STOP - OFFICE REVIEW REQUIRED') || upper.includes('STOP—OFFICE') || upper.includes('STOP: OFFICE')) {
     header.className = 'result-header stop';
@@ -564,22 +543,11 @@ function showResults(text) {
   results.scrollIntoView({ behavior: 'smooth' });
 }
 
-function printResult() {
-  window.print();
-}
-
 function resetForm() {
   docs = {};
-  Object.keys(DOC_LABELS).forEach(key => {
-    const zone = document.getElementById(`zone-${key}`);
-    const nameEl = document.getElementById(`name-${key}`);
-    const removeBtn = document.getElementById(`remove-${key}`);
-    const input = zone ? zone.querySelector('input[type="file"]') : null;
-    if (zone) zone.classList.remove('has-file');
-    if (nameEl) { nameEl.textContent = ''; nameEl.className = 'zone-filename'; }
-    if (removeBtn) removeBtn.style.display = 'none';
-    if (input) input.value = '';
-  });
+  extractionCount = 0;
+  document.getElementById('fileList').innerHTML = '';
+  document.getElementById('dropZone').classList.remove('has-files');
   document.getElementById('results').classList.remove('active');
   document.getElementById('errorBox').classList.remove('active');
   updateRunButton();
