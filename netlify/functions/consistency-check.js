@@ -1,3 +1,5 @@
+const https = require('https');
+
 exports.handler = async function(event, context) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -177,40 +179,61 @@ Overall result labels:
 Behavior rules:
 Be concise and direct. Do not invent missing data. If text is unclear, say so. Show conflicting source values. Do not clear red flags yourself. Prioritize issues that could cause a correction, revision request, client issue, or wrong front-end setup. Keep output practical for Anna.`;
 
-  // Build user message from uploaded documents
   const docLines = documents.map(d => `=== ${d.label.toUpperCase()} ===\n${d.text}`).join('\n\n');
   const userMessage = `Please run the front-end consistency check on the following appraisal write-up packet.\n\n${docLines}`;
 
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const requestBody = JSON.stringify({
+    model: 'claude-3-5-haiku-20241022',
+    max_tokens: 4096,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userMessage }]
+  });
+
+  return new Promise((resolve) => {
+    const options = {
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 4096,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: userMessage }]
-      })
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(requestBody)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode !== 200) {
+            resolve({ statusCode: res.statusCode, body: JSON.stringify({ error: parsed.error ? parsed.error.message : data }) });
+            return;
+          }
+          const result = parsed.content[0].text;
+          resolve({
+            statusCode: 200,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ result })
+          });
+        } catch (e) {
+          resolve({ statusCode: 500, body: JSON.stringify({ error: 'Failed to parse API response: ' + e.message }) });
+        }
+      });
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return { statusCode: response.status, body: JSON.stringify({ error: `API error: ${errorText}` }) };
-    }
+    req.on('error', (e) => {
+      resolve({ statusCode: 500, body: JSON.stringify({ error: 'HTTPS request failed: ' + e.message }) });
+    });
 
-    const data = await response.json();
-    const result = data.content[0].text;
+    req.setTimeout(60000, () => {
+      req.destroy();
+      resolve({ statusCode: 504, body: JSON.stringify({ error: 'Request timed out — please try again.' }) });
+    });
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ result })
-    };
-  } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
-  }
+    req.write(requestBody);
+    req.end();
+  });
 };
