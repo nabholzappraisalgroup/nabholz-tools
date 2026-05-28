@@ -498,10 +498,11 @@ async function runCheck() {
 
   const documents = Object.values(docs);
 
-  // Truncate each doc to 8000 chars to keep payload manageable
+  // Truncate each doc to 3000 chars — key facts (addresses, names, parcels, prices) 
+  // are always on the first pages. This keeps total payload under AI processing limits.
   const truncatedDocs = documents.map(d => ({
     label: d.label,
-    text: d.text.length > 8000 ? d.text.substring(0, 8000) + '\n[...truncated for length]' : d.text
+    text: d.text.length > 3000 ? d.text.substring(0, 3000) + '\n[...truncated]' : d.text
   }));
 
   const payload = JSON.stringify({ documents: truncatedDocs });

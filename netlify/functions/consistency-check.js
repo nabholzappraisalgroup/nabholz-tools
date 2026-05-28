@@ -1,15 +1,27 @@
 const https = require('https');
 
+// CORS headers for browser compatibility
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
+
 exports.handler = async function(event, context) {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+  }
+
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { statusCode: 405, headers: CORS_HEADERS, body: 'Method Not Allowed' };
   }
 
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_API_KEY) {
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'ANTHROPIC_API_KEY not set in environment variables.' })
     };
   }
@@ -20,7 +32,7 @@ exports.handler = async function(event, context) {
   } catch (e) {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Invalid JSON body.' })
     };
   }
@@ -29,7 +41,7 @@ exports.handler = async function(event, context) {
   if (!documents || documents.length === 0) {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'No documents provided.' })
     };
   }
@@ -142,20 +154,20 @@ Be concise. Do not invent data. Show source conflicts. Keep output practical for
           if (res.statusCode !== 200) {
             resolve({
               statusCode: res.statusCode,
-              headers: { 'Content-Type': 'application/json' },
+              headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
               body: JSON.stringify({ error: `API error ${res.statusCode}: ${JSON.stringify(parsed)}` })
             });
           } else {
             resolve({
               statusCode: 200,
-              headers: { 'Content-Type': 'application/json' },
+              headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
               body: JSON.stringify({ result: parsed.content[0].text })
             });
           }
         } catch (e) {
           resolve({
             statusCode: 500,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
             body: JSON.stringify({ error: `Parse error: ${e.message}. Raw: ${data.substring(0, 200)}` })
           });
         }
@@ -165,7 +177,7 @@ Be concise. Do not invent data. Show source conflicts. Keep output practical for
     req.on('error', (e) => {
       resolve({
         statusCode: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: `HTTPS error: ${e.message}` })
       });
     });
@@ -174,7 +186,7 @@ Be concise. Do not invent data. Show source conflicts. Keep output practical for
       req.destroy();
       resolve({
         statusCode: 504,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: 'Request timed out after 25 seconds.' })
       });
     });
