@@ -114,7 +114,7 @@ Be concise. Do not invent data. Show source conflicts. Keep output practical for
   const userMessage = `Please run the front-end consistency check on the following appraisal write-up packet.\n\n${docLines}`;
 
   const requestBody = JSON.stringify({
-    model: 'claude-3-5-haiku-20241022',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userMessage }]
