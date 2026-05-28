@@ -2,11 +2,6 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/"
-  to = "/appraisal-intake/index.html"
-  status = 302
-
-[[redirects]]
   from = "/appraisal-intake"
   to = "/appraisal-intake/index.html"
   status = 200

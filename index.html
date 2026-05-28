@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nabholz Appraisal Group — Staff Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:#f0f2f7;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+.header{
+  background:#191A4A;
+  padding:36px 24px 32px;
+  text-align:center;
+}
+.header img.logo{
+  height:56px;
+  margin-bottom:14px;
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+}
+.header h1{
+  font-family:'Poppins',sans-serif;
+  font-size:1.6rem;
+  font-weight:700;
+  color:#ffffff;
+  letter-spacing:.02em;
+  margin-bottom:4px;
+}
+.header .tagline{
+  font-size:.9rem;
+  color:#58A9C4;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* MAIN */
+.main{
+  flex:1;
+  max-width:860px;
+  margin:40px auto;
+  padding:0 20px 60px;
+  width:100%;
+}
+
+.section-label{
+  font-family:'Poppins',sans-serif;
+  font-size:.78rem;
+  font-weight:700;
+  color:#58A9C4;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+
+/* TOOL CARDS */
+.tools-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-bottom:40px;
+}
+@media(max-width:580px){.tools-grid{grid-template-columns:1fr;}}
+
+.tool-card{
+  background:#ffffff;
+  border-radius:14px;
+  padding:28px 24px;
+  text-decoration:none;
+  color:inherit;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  border:2px solid transparent;
+  transition:all .2s;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.tool-card:hover{
+  border-color:#58A9C4;
+  box-shadow:0 6px 20px rgba(25,26,74,.12);
+  transform:translateY(-2px);
+}
+.tool-icon{
+  font-size:2.2rem;
+  line-height:1;
+}
+.tool-name{
+  font-family:'Poppins',sans-serif;
+  font-size:1.05rem;
+  font-weight:700;
+  color:#191A4A;
+}
+.tool-desc{
+  font-size:.88rem;
+  color:#6b7280;
+  line-height:1.55;
+}
+.tool-arrow{
+  margin-top:auto;
+  padding-top:12px;
+  font-size:.82rem;
+  font-weight:600;
+  color:#58A9C4;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* COMING SOON */
+.tool-card.soon{
+  opacity:.6;
+  cursor:default;
+  pointer-events:none;
+}
+.soon-badge{
+  display:inline-block;
+  background:#f3f4f6;
+  color:#9ca3af;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:3px 8px;
+  border-radius:20px;
+  margin-top:2px;
+  width:fit-content;
+}
+
+/* FOOTER */
+.footer{
+  background:#111224;
+  color:rgba(255,255,255,.4);
+  text-align:center;
+  padding:18px;
+  font-size:.78rem;
+}
+.footer span{color:#58A9C4;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <img src="/assets/logo-white.png" alt="Nabholz Appraisal Group" class="logo" />
+  <h1>Staff Tools</h1>
+  <div class="tagline">Helping You Make Better Decisions · Since 1992</div>
+</header>
+
+<main class="main">
+
+  <div class="section-label">Available Tools</div>
+
+  <div class="tools-grid">
+
+    <a href="/appraisal-intake/" class="tool-card">
+      <div class="tool-icon">📋</div>
+      <div class="tool-name">Private Order Intake</div>
+      <div class="tool-desc">Take a new GP or private appraisal order. Guides through order type, scope, and client details — produces a printable summary and sends directly to Monday.com.</div>
+      <div class="tool-arrow">Open tool →</div>
+    </a>
+
+    <a href="/consistency-check/" class="tool-card">
+      <div class="tool-icon">🔍</div>
+      <div class="tool-name">Write-Up Consistency Checker</div>
+      <div class="tool-desc">QC a file before it moves to the appraiser. Upload your work file documents and get a flagged report — Red, Yellow, and Information flags in seconds.</div>
+      <div class="tool-arrow">Open tool →</div>
+    </a>
+
+    <div class="tool-card soon">
+      <div class="tool-icon">📄</div>
+      <div class="tool-name">Engagement Letter</div>
+      <div class="tool-note soon-badge">Coming Soon</div>
+      <div class="tool-desc">Auto-fill and generate engagement letters from order details.</div>
+    </div>
+
+    <div class="tool-card soon">
+      <div class="tool-icon">🏘️</div>
+      <div class="tool-name">County Tax Lookup</div>
+      <div class="tool-note soon-badge">Coming Soon</div>
+      <div class="tool-desc">Auto-pull property data from county assessor records by address.</div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="footer">
+  Nabholz Appraisal Group &nbsp;·&nbsp; <span>Internal Staff Tools</span> &nbsp;·&nbsp; Not for client distribution
+</footer>
+
+</body>
+</html>
