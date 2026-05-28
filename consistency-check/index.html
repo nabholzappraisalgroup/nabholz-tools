@@ -674,14 +674,8 @@ async function runCheck() {
 
   const documents = Object.values(docs);
 
-  // Truncate each doc to 1500 chars — just the key facts from page 1
-  // Addresses, names, parcels, prices are always at the top
-  const truncatedDocs = documents.map(d => ({
-    label: d.label,
-    text: d.text.length > 1500 ? d.text.substring(0, 1500) + '\n[...]' : d.text
-  }));
-
-  const payload = JSON.stringify({ documents: truncatedDocs });
+  // Railway has no timeout limit, so we can send full documents
+  const payload = JSON.stringify({ documents });
   const payloadSizeMB = (new Blob([payload]).size / 1024 / 1024).toFixed(2);
 
   // Hard stop if still too large
