@@ -452,6 +452,41 @@ body{
   text-align:center;padding:16px;font-size:.78rem;
 }
 
+/* STAFF NOTES */
+.staff-note-wrap{
+  margin-top:12px;
+  border-top:1px solid var(--gray-200);
+  padding-top:10px;
+}
+.staff-note-label{
+  font-size:.75rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--gray-500);
+  margin-bottom:5px;
+}
+.staff-note-input{
+  width:100%;
+  min-height:52px;
+  padding:8px 10px;
+  border:1px solid var(--gray-300);
+  border-radius:6px;
+  font-family:inherit;
+  font-size:.84rem;
+  color:var(--gray-700);
+  resize:vertical;
+  background:var(--gray-100);
+  transition:border-color .15s;
+  line-height:1.5;
+}
+.staff-note-input:focus{
+  outline:none;
+  border-color:var(--gold);
+  background:var(--white);
+}
+.staff-note-input::placeholder{color:var(--gray-400);}
+
 /* PRINT STYLES */
 @media print {
   body{background:white !important;}
@@ -461,6 +496,19 @@ body{
   .results{display:block !important;}
   .finding-card{break-inside:avoid;page-break-inside:avoid;}
   .findings-section{break-inside:avoid;page-break-inside:avoid;}
+  /* Hide empty note boxes in print; show populated ones as styled text */
+  .staff-note-input:placeholder-shown{display:none;}
+  .staff-note-wrap:has(.staff-note-input:placeholder-shown){display:none;}
+  .staff-note-input{
+    border:none;
+    background:transparent;
+    resize:none;
+    padding:4px 0;
+    font-style:italic;
+    color:var(--gray-700);
+    min-height:unset;
+  }
+  .staff-note-label{color:var(--gray-600);}
   @page{margin:0.5in;}
 }
 </style>
@@ -929,7 +977,16 @@ function showResults(text, docNames) {
     container.innerHTML += `
       <div class="findings-section">
         <div class="findings-section-title">📋 Unable to Verify — Missing Source</div>
-        ${parsed.unableToVerify.map(v => `<div class="finding-card blue"><div class="finding-title">${escapeHtml(v)}</div></div>`).join('')}
+        ${parsed.unableToVerify.map(v => {
+          const noteId = 'note-' + Math.random().toString(36).slice(2, 9);
+          return `<div class="finding-card blue">
+            <div class="finding-title">${escapeHtml(v)}</div>
+            <div class="staff-note-wrap">
+              <div class="staff-note-label">Staff Note</div>
+              <textarea class="staff-note-input" id="${noteId}" placeholder="Add a note (optional) — appears in printed workfile copy…" rows="2"></textarea>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
     `;
   }
@@ -963,6 +1020,7 @@ function showResults(text, docNames) {
 }
 
 function renderFinding(finding, severity, badge) {
+  const noteId = 'note-' + Math.random().toString(36).slice(2, 9);
   return `
     <div class="finding-card ${severity}">
       <div class="finding-header">
@@ -971,6 +1029,10 @@ function renderFinding(finding, severity, badge) {
       </div>
       ${finding.detail ? `<div class="finding-detail">${escapeHtml(finding.detail)}</div>` : ''}
       ${finding.action ? `<div class="finding-action">${escapeHtml(finding.action)}</div>` : ''}
+      <div class="staff-note-wrap">
+        <div class="staff-note-label">Staff Note</div>
+        <textarea class="staff-note-input" id="${noteId}" placeholder="Add a note (optional) — appears in printed workfile copy…" rows="2"></textarea>
+      </div>
     </div>
   `;
 }
